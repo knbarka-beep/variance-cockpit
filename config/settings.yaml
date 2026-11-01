@@ -1,0 +1,192 @@
+# Variance Cockpit - all assumptions for the synthetic data in one place.
+# Everything here is fictional. Change a value, rerun scripts/generate_data.py,
+# and the data is rebuilt from scratch.
+
+company:
+  name: Odense Demo Manufacturing ApS (fictional)
+  currency: DKK
+  employees: 80 # descriptive only; staff costs are driven by cost_structure below
+
+period:
+  first_month: "2024-10"
+  last_month: "2026-09"
+  fiscal_year_start_month: 10 # fiscal year runs October-September, named after the year it ends
+
+random_seed: 42 # same seed = identical data every run
+
+# Budgeted revenue per fiscal year (DKK). FY2025 = Oct 2024-Sep 2025.
+budget_revenue_per_fiscal_year:
+  FY2025: 118000000
+  FY2026: 122000000
+
+# Revenue seasonality per calendar month (relative weights, rescaled to average 1).
+# Assumption: lower in July (summer shutdown) and December (holidays).
+seasonality:
+  1: 0.95
+  2: 1.00
+  3: 1.05
+  4: 1.05
+  5: 1.05
+  6: 1.05
+  7: 0.75
+  8: 1.00
+  9: 1.05
+  10: 1.05
+  11: 1.05
+  12: 0.85
+
+# Average selling price per unit. Used to turn revenue into sales volume (units),
+# so raw materials and packaging can be budgeted as volume x unit cost.
+selling_price_per_unit_dkk: 2500
+
+# Cost structure as share of revenue.
+# Source: Danmarks Statistik, "Industriens køb af varer og tjenester" (2014),
+# https://www.dst.dk/da/Statistik/udgivelser/NytHtml?cid=21577
+cost_structure:
+  # Calibrated: Danish manufacturing bought goods for about 44-46 % of revenue,
+  # of which packaging about 2 %.
+  Cost of materials: 0.45
+  # Own assumption, not calibrated.
+  Staff costs: 0.30
+  # Calibrated: purchased services about 13 % of revenue.
+  Other operating expenses: 0.13
+
+# Normal month-to-month noise on actuals vs budget (standard deviation).
+# monthly_sd applies to every account unless the account sets its own noise_sd.
+# Steady accounts (revenue, payroll, materials, energy) use 1 %. Lumpy accounts
+# (repairs, IT, marketing, travel, other external costs) set a higher noise_sd,
+# which gives roughly 1 to 3 material variances a month from noise alone.
+# Cost noise is timing noise: the 12 monthly swings of each fiscal year cancel
+# out. Then the whole year is shifted by a small annual drift (annual_drift_sd),
+# so each account lands a few per cent from budget for the full year, not exactly on it.
+noise:
+  monthly_sd: 0.01
+  annual_drift_sd: 0.02
+
+# A variance is material if BOTH limits are met (per account, cost centre and month).
+materiality:
+  min_pct: 0.05
+  min_amount_dkk: 50000
+
+cost_centres:
+  - {cost_centre: Production, code: 100, description: "Factory floor, machines and production staff"}
+  - {cost_centre: Sales, code: 200, description: "Sales team, marketing and customer service"}
+  - {cost_centre: Administration, code: 300, description: "Management, finance, HR, IT and premises"}
+
+# Chart of accounts.
+# group_share = the account's share of its P&L group (shares within a group add up to 1).
+# cost_centres = which cost centres the account can be posted to, and the budget split between them.
+# lines_per_month = how many ledger lines a normal month has per cost centre.
+# noise_sd = optional, overrides noise.monthly_sd for lumpy accounts.
+accounts:
+  - {account_no: 1010, name: "Product revenue, domestic", pl_group: Revenue, market: domestic, cost_centres: {Sales: 1.0}}
+  - {account_no: 1020, name: "Product revenue, export", pl_group: Revenue, market: export, cost_centres: {Sales: 1.0}}
+
+  - {account_no: 2010, name: Raw materials, pl_group: Cost of materials, group_share: 0.89, cost_centres: {Production: 1.0}, lines_per_month: 10}
+  - {account_no: 2020, name: Packaging, pl_group: Cost of materials, group_share: 0.11, cost_centres: {Production: 1.0}, lines_per_month: 3}
+
+  - {account_no: 3010, name: Wages and salaries, pl_group: Staff costs, group_share: 0.80,
+     cost_centres: {Production: 0.62, Sales: 0.16, Administration: 0.22}, lines_per_month: 1,
+     payroll_text: "Payroll {month}, {cc}"}
+  - {account_no: 3020, name: Overtime, pl_group: Staff costs, group_share: 0.04, cost_centres: {Production: 1.0}, lines_per_month: 1,
+     payroll_text: "Overtime {month}, {cc}"}
+  - {account_no: 3030, name: Temporary staff, pl_group: Staff costs, group_share: 0.03, cost_centres: {Production: 1.0}, lines_per_month: 2}
+  - {account_no: 3040, name: Pension and social security costs, pl_group: Staff costs, group_share: 0.13,
+     cost_centres: {Production: 0.62, Sales: 0.16, Administration: 0.22}, lines_per_month: 1,
+     payroll_text: "Pension and social costs {month}, {cc}"}
+
+  - {account_no: 4010, name: Repairs and maintenance, pl_group: Other operating expenses, group_share: 0.20, cost_centres: {Production: 1.0}, lines_per_month: 4, noise_sd: 0.40}
+  - {account_no: 4020, name: Energy, pl_group: Other operating expenses, group_share: 0.22, cost_centres: {Production: 1.0}, lines_per_month: 1}
+  - {account_no: 4030, name: Rent, pl_group: Other operating expenses, group_share: 0.15, cost_centres: {Administration: 1.0}, lines_per_month: 1, fixed: true}
+  - {account_no: 4040, name: IT costs, pl_group: Other operating expenses, group_share: 0.12, cost_centres: {Administration: 1.0}, lines_per_month: 3, noise_sd: 0.40}
+  - {account_no: 4050, name: Marketing, pl_group: Other operating expenses, group_share: 0.10, cost_centres: {Sales: 1.0}, lines_per_month: 2, noise_sd: 0.50}
+  - {account_no: 4060, name: Travel, pl_group: Other operating expenses, group_share: 0.07, cost_centres: {Sales: 0.7, Administration: 0.3}, lines_per_month: 3, noise_sd: 0.50}
+  - {account_no: 4090, name: Other external costs, pl_group: Other operating expenses, group_share: 0.14,
+     cost_centres: {Production: 0.3, Sales: 0.2, Administration: 0.5}, lines_per_month: 6, noise_sd: 0.50,
+     generic_texts: ["Card payment", "Miscellaneous expenses", "Expense claim", "Sundry purchase", "Card payment, online purchase"]}
+
+# Fictional customers. share = share of budgeted revenue (adds up to 1).
+# market decides the revenue account (domestic -> 1010, export -> 1020).
+customers:
+  - {name: Nordvik Maskinfabrik A/S, country: DK, market: domestic, share: 0.20} # key customer
+  - {name: Hedeby Landbrugsteknik A/S, country: DK, market: domestic, share: 0.08}
+  - {name: Kattegat Marine Systems ApS, country: DK, market: domestic, share: 0.06}
+  - {name: Lindholm Pumper A/S, country: DK, market: domestic, share: 0.06}
+  - {name: Sydfyn Industrimontage ApS, country: DK, market: domestic, share: 0.05}
+  - {name: Bakkegaard Hydraulik A/S, country: DK, market: domestic, share: 0.05}
+  - {name: Ravnsborg Ventilation ApS, country: DK, market: domestic, share: 0.05}
+  - {name: Elbtal Antriebstechnik GmbH, country: DE, market: export, share: 0.09}
+  - {name: Nordheide Fahrzeugbau GmbH, country: DE, market: export, share: 0.07}
+  - {name: Vastkust Industri AB, country: SE, market: export, share: 0.07}
+  - {name: Fjellborg Mekaniske AS, country: NO, market: export, share: 0.06}
+  - {name: Polderwijk Machines B.V., country: NL, market: export, share: 0.05}
+  - {name: Saimaa Process Oy, country: FI, market: export, share: 0.04}
+  - {name: Hanseport Logistiktechnik GmbH, country: DE, market: export, share: 0.04}
+  - {name: Baltica Components UAB, country: LT, market: export, share: 0.03}
+
+products: [gear housings, hydraulic brackets, machined shafts, welded steel frames, pump components]
+
+# Fictional suppliers. account_no = the account their invoices are normally booked to.
+# items = text used after the invoice number in the ledger description.
+suppliers:
+  - {name: Jydsk Staalhandel A/S, country: DK, account_no: 2010, items: [steel coil delivery, steel plate delivery]}
+  - {name: Nordisk Aluminium Service ApS, country: DK, account_no: 2010, items: [aluminium profiles delivery]}
+  - {name: Rheinberg Stahl GmbH, country: DE, account_no: 2010, items: [steel bar delivery, steel coil delivery]}
+  - {name: Vestkyst Polymer ApS, country: DK, account_no: 2010, items: [plastic granulate delivery]}
+  - {name: Bergslagen Metall AB, country: SE, account_no: 2010, items: [stainless steel sheet delivery]}
+  - {name: Fyns Emballage ApS, country: DK, account_no: 2020, items: [cardboard boxes, stretch film and tape]}
+  - {name: Kartonfabrikken Ejby ApS, country: DK, account_no: 2020, items: [pallets and cardboard inserts]}
+  - {name: Vikarhuset Odense ApS, country: DK, account_no: 3030, items: ["temporary staff week {week}, production"]}
+  - {name: ProBemanding Fyn A/S, country: DK, account_no: 3030, items: ["temporary staff week {week}, production"]}
+  - {name: Hydra-Service Danmark ApS, country: DK, account_no: 4010, items: [service visit hydraulic press, hydraulic hoses and seals]}
+  - {name: Fynsk Maskinreparation ApS, country: DK, account_no: 4010, items: [preventive maintenance CNC line, spare parts]}
+  - {name: ElektroTeknik Tarup ApS, country: DK, account_no: 4010, items: [electrical service, control panel inspection]}
+  - {name: Fyns Energiforsyning A/S, country: DK, account_no: 4020, items: [electricity and gas]}
+  - {name: Tarup Erhvervsejendomme ApS, country: DK, account_no: 4030, items: ["rent {month}, Tarup premises"]}
+  - {name: Odense IT-Drift ApS, country: DK, account_no: 4040, items: [IT support, network maintenance]}
+  - {name: Nordlys Software A/S, country: DK, account_no: 4040, items: [ERP licence, Microsoft 365 licences]}
+  - {name: DataPunkt Hosting ApS, country: DK, account_no: 4040, items: [cloud hosting and backup]}
+  - {name: Kommunikationshuset Fyn ApS, country: DK, account_no: 4050, items: [online campaign, product brochures]}
+  - {name: Messepartner Danmark ApS, country: DK, account_no: 4050, items: [trade fair stand]}
+  - {name: Nordrejser Erhverv ApS, country: DK, account_no: 4060, items: ["flights, customer visit", "flights, trade fair"]}
+  - {name: Havnehotellet Odense ApS, country: DK, account_no: 4060, items: ["hotel, visiting customers", "hotel, sales meeting"]}
+  - {name: Kontorhuset Fyn ApS, country: DK, account_no: 4090, items: [office supplies, printer toner and paper]}
+  - {name: CleanTeam Fyn ApS, country: DK, account_no: 4090, items: [cleaning services]}
+  - {name: Revisionsfirmaet Bogelund & Co, country: DK, account_no: 4090, items: [audit and accounting advice]}
+  - {name: Kantineservice Syd ApS, country: DK, account_no: 4090, items: [canteen services, coffee and fruit scheme]}
+
+# Planted events (the answer key). Each is written to data/truth/planted_events.csv.
+events:
+  raw_material_price_increase: # event 1
+    account_no: 2010
+    cost_centre: Production
+    from_period: "2026-06"
+    increase: 0.08
+  machine_repair: # event 2
+    account_no: 4010
+    cost_centre: Production
+    period: "2026-09"
+    amount_dkk: 350000
+    supplier: Hydra-Service Danmark ApS
+    text: "Invoice 48213, emergency repair hydraulic press line 2, parts and labour"
+  energy_misposting: # event 3 - booked in full in this month, corrected the month after
+    account_no: 4020
+    cost_centre: Production
+    period: "2026-07"
+  key_customer_volume_cut: # event 4
+    customer: Nordvik Maskinfabrik A/S
+    from_period: "2026-07"
+    cut: 0.25
+  sick_leave_production: # event 5
+    cost_centre: Production
+    periods: ["2026-08", "2026-09"]
+    overtime_account_no: 3020
+    extra_overtime_dkk: 100000
+    temporary_staff_account_no: 3030
+    extra_temporary_staff_dkk: 200000
+  unexplained_admin_overspend: # event 6
+    account_no: 4090
+    cost_centre: Administration
+    period: "2026-09"
+    extra_dkk: 120000
+    transactions: 25

@@ -1,0 +1,16 @@
+account_no,account_name,pl_group,allowed_cost_centres
+1010,"Product revenue, domestic",Revenue,Sales
+1020,"Product revenue, export",Revenue,Sales
+2010,Raw materials,Cost of materials,Production
+2020,Packaging,Cost of materials,Production
+3010,Wages and salaries,Staff costs,Production;Sales;Administration
+3020,Overtime,Staff costs,Production
+3030,Temporary staff,Staff costs,Production
+3040,Pension and social security costs,Staff costs,Production;Sales;Administration
+4010,Repairs and maintenance,Other operating expenses,Production
+4020,Energy,Other operating expenses,Production
+4030,Rent,Other operating expenses,Administration
+4040,IT costs,Other operating expenses,Administration
+4050,Marketing,Other operating expenses,Sales
+4060,Travel,Other operating expenses,Sales;Administration
+4090,Other external costs,Other operating expenses,Production;Sales;Administration

@@ -1,0 +1,4 @@
+cost_centre,code,description
+Production,100,"Factory floor, machines and production staff"
+Sales,200,"Sales team, marketing and customer service"
+Administration,300,"Management, finance, HR, IT and premises"

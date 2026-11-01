@@ -1,0 +1,41 @@
+counterparty,type,country,default_account_no
+Nordvik Maskinfabrik A/S,customer,DK,1010
+Hedeby Landbrugsteknik A/S,customer,DK,1010
+Kattegat Marine Systems ApS,customer,DK,1010
+Lindholm Pumper A/S,customer,DK,1010
+Sydfyn Industrimontage ApS,customer,DK,1010
+Bakkegaard Hydraulik A/S,customer,DK,1010
+Ravnsborg Ventilation ApS,customer,DK,1010
+Elbtal Antriebstechnik GmbH,customer,DE,1020
+Nordheide Fahrzeugbau GmbH,customer,DE,1020
+Vastkust Industri AB,customer,SE,1020
+Fjellborg Mekaniske AS,customer,False,1020
+Polderwijk Machines B.V.,customer,NL,1020
+Saimaa Process Oy,customer,FI,1020
+Hanseport Logistiktechnik GmbH,customer,DE,1020
+Baltica Components UAB,customer,LT,1020
+Jydsk Staalhandel A/S,supplier,DK,2010
+Nordisk Aluminium Service ApS,supplier,DK,2010
+Rheinberg Stahl GmbH,supplier,DE,2010
+Vestkyst Polymer ApS,supplier,DK,2010
+Bergslagen Metall AB,supplier,SE,2010
+Fyns Emballage ApS,supplier,DK,2020
+Kartonfabrikken Ejby ApS,supplier,DK,2020
+Vikarhuset Odense ApS,supplier,DK,3030
+ProBemanding Fyn A/S,supplier,DK,3030
+Hydra-Service Danmark ApS,supplier,DK,4010
+Fynsk Maskinreparation ApS,supplier,DK,4010
+ElektroTeknik Tarup ApS,supplier,DK,4010
+Fyns Energiforsyning A/S,supplier,DK,4020
+Tarup Erhvervsejendomme ApS,supplier,DK,4030
+Odense IT-Drift ApS,supplier,DK,4040
+Nordlys Software A/S,supplier,DK,4040
+DataPunkt Hosting ApS,supplier,DK,4040
+Kommunikationshuset Fyn ApS,supplier,DK,4050
+Messepartner Danmark ApS,supplier,DK,4050
+Nordrejser Erhverv ApS,supplier,DK,4060
+Havnehotellet Odense ApS,supplier,DK,4060
+Kontorhuset Fyn ApS,supplier,DK,4090
+CleanTeam Fyn ApS,supplier,DK,4090
+Revisionsfirmaet Bogelund & Co,supplier,DK,4090
+Kantineservice Syd ApS,supplier,DK,4090
