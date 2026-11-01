@@ -1,0 +1,41 @@
+{
+  "company_name": "Odense Demo Manufacturing ApS (fictional)",
+  "notice": "All data is synthetic. The company and all customers and suppliers are fictional.",
+  "periods": [
+    "2024-10",
+    "2024-11",
+    "2024-12",
+    "2025-01",
+    "2025-02",
+    "2025-03",
+    "2025-04",
+    "2025-05",
+    "2025-06",
+    "2025-07",
+    "2025-08",
+    "2025-09",
+    "2025-10",
+    "2025-11",
+    "2025-12",
+    "2026-01",
+    "2026-02",
+    "2026-03",
+    "2026-04",
+    "2026-05",
+    "2026-06",
+    "2026-07",
+    "2026-08",
+    "2026-09"
+  ],
+  "fiscal_years": [
+    "FY2025",
+    "FY2026"
+  ],
+  "latest_period": "2026-09",
+  "materiality": {
+    "min_pct": 5.0,
+    "min_amount_dkk": 50000.0
+  },
+  "sign_convention": "Amounts ending in _dkk are profit view (revenue and costs positive; variance positive = favourable). Columns ending in _ledger_dkk are as booked (debit +, credit -). Percentages are in per cent.",
+  "built_at": "2026-11-01T18:52:47+00:00"
+}

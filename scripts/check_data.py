@@ -102,6 +102,8 @@ with pd.ExcelWriter(xlsx) as w:
         df.to_excel(w, sheet_name=name, index=False)
     monthly.to_excel(w, sheet_name="monthly_by_account", index=False)
     by_group.to_excel(w, sheet_name="monthly_by_group", index=False)
+# Monthly counts for build_db.py, which compares them with the SQL views.
+monthly.groupby("period")["material"].sum().rename("material_count").to_csv(xlsx.parent / "material_counts.csv")
 
 # ---------------------------------------------------------------- 4. reconciliation
 # Read the Excel file back and compare it with a fresh sum of the raw ledger lines.
