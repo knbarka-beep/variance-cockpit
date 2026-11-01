@@ -29,7 +29,8 @@ One JSON document per material variance, built only from the DuckDB views:
 - **For raw materials and packaging:** the price/volume split.
 - **The ledger lines behind the variance:** date, counterparty, description and amount, largest first. At most 40 lines are shown; the rest are summarised as a count and a total.
 - **For revenue variances (from v2):** revenue per customer this month vs that customer's average for the previous 3 months, in amount and %, largest change first. It comes from the SQL view `v_customer_month`. It shows whether one customer explains the variance. The 3-month average is not seasonally adjusted.
-- **For cost variances (from v2):** the largest ledger line is marked, with its size as a percentage of the variance (`largest_line_share_of_variance_pct`).
+- **For cost variances (from v2):** cost per supplier this month vs that supplier's average for the previous 3 months on the same account and cost centre, with the number of lines. It comes from the SQL view `v_counterparty_month`. Lines without a counterparty (payroll, card payments, expense claims) are grouped as "(no counterparty)". The largest ledger line is also marked, for information only.
+- **For each customer or supplier (from v2):** its change as a share of the variance (`change_share_of_variance_pct`). Positive means it moves in the same direction as the variance.
 - **The same account and cost centre for the previous 3 months:** so the model can tell a one-off from a persistent change.
 - **The following month, if available:** so a reversal or correction is visible. This is given for every variance, not only for energy: the script must not know which variances are planted events.
 
@@ -109,10 +110,10 @@ The evaluation compares versions side by side and writes both to `data/ai/evalua
 | Prompt | `prompts/v1/variance_comment.md` | `prompts/variance_comment.md` |
 | Drafts | `data/ai/v1/drafts.json` (kept as the baseline) | `data/ai/drafts.json`, each with `prompt_version: v2` |
 | Model | Fallback across 3.8 Flash, 3.6 Flash and 3.5 Flash-Lite as quotas ran out | `gemini-3.5-flash-lite` only, so all drafts are comparable |
-| Input | Ledger lines, previous 3 months, following month, price/volume split | Same, plus the customer table for revenue and the marked largest line for costs |
+| Input | Ledger lines, previous 3 months, following month, price/volume split | Same, plus the customer table for revenue and the supplier table for costs |
 
 v2 prompt changes:
-- Name a specific cause only if one ledger line, one counterparty or one customer explains about half of the variance. Otherwise say "unclear" and what to check.
+- Name a specific cause only if one supplier (costs) or one customer (revenue) explains about half of the variance or more, measured as its change against its own 3-month average. "(no counterparty)" counts only as a single line (such as one payroll line), not as many small card payments. Otherwise say "unclear" and what to check.
 - Use "persistent" or "price" only if the previous months show the same direction and size.
 - Write amounts as positive numbers, and use the words favourable and unfavourable for direction.
 - Never calculate new totals or differences.
@@ -121,6 +122,7 @@ v1 results (71 drafts): 10/15 planted-event variances correct, 30/55 noise draft
 
 ## Known limits
 
+- **Noise is a real invoice in the ledger.** In this data, a noise variance on a lumpy account (repairs, marketing, IT) comes from an invoice that really is unusually large or small that month. No baseline can tell it apart from a genuine one-off, so a draft that names that invoice is reading the ledger correctly. Claiming "price" or "persistent" for it would be a real error.
 - **Synthetic data with planted causes.** The evaluation shows that the model reads the data correctly when the cause is visible in the ledger lines. It does **not** show that it would find causes in a real company, where causes are often outside the ledger (a phone call, a contract, a decision).
 - **Small sample:** six planted events and about 70 variances.
 - **Fixed categories:** the cause categories are a simplification. A real variance can have several causes.

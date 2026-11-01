@@ -118,19 +118,34 @@ def build_input(con, v):
     for line in lines:
         line["date"] = str(line["date"])
 
+    # Which customer or supplier explains the variance? Each one's change vs its own average
+    # of the 3 months before, and that change as a share of the variance.
+    # Share sign: positive = the change moves in the same direction as the variance.
+    # (Revenue: more revenue = higher profit. Costs: more cost = lower profit, hence the minus.)
+    keys = [v["period"], v["account_no"], v["cost_centre"]]
+    profit_direction = 1 if v["pl_group"] == "Revenue" else -1
     if v["pl_group"] == "Revenue":
-        # Which customer explains it? This month vs each customer's average of the 3 months before.
-        inp["revenue_by_customer"] = rows(con, """
+        table = rows(con, """
             SELECT customer, revenue_dkk, avg_prev_3_months_dkk, change_dkk, change_pct
-            FROM v_customer_month
-            WHERE period = ? AND account_no = ? AND cost_centre = ?
-            ORDER BY ABS(change_dkk) DESC NULLS LAST, customer""",
-            [v["period"], v["account_no"], v["cost_centre"]])
-    elif lines:
-        # Cost variance: mark the largest line and how big it is compared with the variance.
-        lines[0]["largest_line"] = True
-        inp["largest_line_share_of_variance_pct"] = round(
-            100 * abs(lines[0]["amount_dkk"]) / abs(v["variance_profit_dkk"]), 1)
+            FROM v_customer_month WHERE period = ? AND account_no = ? AND cost_centre = ?
+            ORDER BY ABS(change_dkk) DESC NULLS LAST, customer""", keys)
+        inp["revenue_by_customer"] = table
+    else:
+        table = rows(con, """
+            SELECT counterparty AS supplier, cost_dkk, avg_prev_3_months_dkk, change_dkk, change_pct,
+                   lines, avg_lines_prev_3_months
+            FROM v_counterparty_month WHERE period = ? AND account_no = ? AND cost_centre = ?
+              AND (cost_dkk <> 0 OR avg_prev_3_months_dkk <> 0)
+            ORDER BY ABS(change_dkk) DESC NULLS LAST, counterparty""", keys)
+        inp["cost_by_supplier"] = table
+        if lines:  # for information only; not used by the cause rule
+            lines[0]["largest_line"] = True
+            inp["largest_line_share_of_variance_pct"] = round(
+                100 * abs(lines[0]["amount_dkk"]) / abs(v["variance_profit_dkk"]), 1)
+    for row in table:
+        if row["change_dkk"] is not None:
+            row["change_share_of_variance_pct"] = round(
+                100 * profit_direction * row["change_dkk"] / v["variance_profit_dkk"], 1)
 
     n = ai["max_ledger_lines"]
     inp["ledger_lines"] = lines[:n]

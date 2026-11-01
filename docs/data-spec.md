@@ -226,3 +226,7 @@ It also writes `data/check/variance_check.xlsx` with one sheet per raw table, pl
 
 - `monthly_by_account`: actual, budget, flexed budget, variances and a material flag per account, cost centre and month.
 - `monthly_by_group`: actual vs budget per P&L group and month.
+
+## 11. Known limitations
+
+- Monthly noise swings are capped at ±75 % before the year's average is removed, so two months that both hit the cap end up with identical amounts. For example, marketing in February and March 2025 are both DKK 18.380,75.

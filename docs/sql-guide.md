@@ -209,6 +209,18 @@ I tested that the checks can actually fail. Changing one ledger line by DKK 0.01
 
 Every other domestic customer was +3 to +6 % that month (July was a low month), so Nordvik stands out.
 
+## 13 v_counterparty_month
+
+**Question:** Which supplier explains a cost variance, and is its spend unusual this month?
+
+**Key SQL idea:** the same pattern as view 12 (grid + `LEFT JOIN` + a window frame for the previous 3 months), applied to costs. `COALESCE(counterparty, '(no counterparty)')` groups payroll and card payments, which have no supplier. `COUNT(*)` adds the number of lines, so one payroll line can be told apart from 27 small card payments.
+
+**Example row:** the planted machine repair, September 2026
+
+| supplier | period | cost | avg previous 3 months | change | lines |
+|---|---|---|---|---|---|
+| Hydra-Service Danmark ApS | 2026-09 | 350,000.00 | 37,265.58 | 312,734.42 | 1 |
+
 ## Interview one-liners
 
 - **"Why not calculate in Python or in the dashboard?"** One place for every number. The dashboard only displays, so it cannot disagree with itself.
