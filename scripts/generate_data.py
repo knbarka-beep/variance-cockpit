@@ -254,7 +254,12 @@ def truth_row(event_id, description, accounts_, cc, check_basis="budget"):
             "cost_centre": cc, "periods": ";".join(periods),
             "expected_direction": dirs[0] if len(set(dirs)) == 1 else ";".join(dirs),
             "approximate_size_dkk": ";".join(f"{round(effect[p], -3):+.0f}" for p in periods),
-            "check_basis": check_basis}
+            "check_basis": check_basis,
+            "expected_cause_category": EXPECTED_CAUSE[event_id]}
+
+
+# The cause category a good variance comment should name (used by scripts/evaluate_ai.py).
+EXPECTED_CAUSE = {1: "price", 2: "one_off", 3: "timing", 4: "volume", 5: "staffing", 6: "unclear"}
 
 
 truth = pd.DataFrame([

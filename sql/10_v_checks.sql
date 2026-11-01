@@ -76,10 +76,20 @@ material_counts AS (
            COUNT(*) FILTER (WHERE k.material_variances IS DISTINCT FROM c.material_count) AS failures
     FROM (SELECT period, material_variances FROM v_kpis WHERE basis = 'month') k
     FULL OUTER JOIN check_data_counts c ON c.period = k.period
+),
+-- 7. Price rows in the material list = material price/usage variances in v_flexed_budget
+price_rows AS (
+    SELECT COUNT(*) AS checked,
+           COUNT(*) FILTER (WHERE m.variance_profit_dkk IS DISTINCT FROM f.price_usage_variance_profit_dkk
+                               OR m.flexed_budget_dkk IS DISTINCT FROM f.flexed_budget_dkk) AS failures
+    FROM (SELECT * FROM v_material_variances WHERE variance_type = 'price') m
+    FULL OUTER JOIN (SELECT * FROM v_flexed_budget WHERE price_usage_material) f
+      ON f.period = m.period AND f.account_no = m.account_no AND f.cost_centre = m.cost_centre
 )
 SELECT 1 AS check_no, 'Transactions = actual per account, cost centre and month' AS check_name, checked, failures FROM tx_vs_account
 UNION ALL SELECT 2, 'P&L groups and EBITDA = sum of accounts, per month', checked, failures FROM group_vs_account
 UNION ALL SELECT 3, 'EBITDA bridge: budget + steps = actual (month and YTD)', checked, failures FROM bridge
 UNION ALL SELECT 4, 'Flexed budget: price/usage + volume = total variance', checked, failures FROM flexed
 UNION ALL SELECT 5, 'Ledger line count and total = raw CSV file', checked, failures FROM ledger_vs_raw
-UNION ALL SELECT 6, 'Material variances per month = check_data.py', checked, failures FROM material_counts;
+UNION ALL SELECT 6, 'Material variances per month = check_data.py', checked, failures FROM material_counts
+UNION ALL SELECT 7, 'Price rows in material list = v_flexed_budget', checked, failures FROM price_rows;

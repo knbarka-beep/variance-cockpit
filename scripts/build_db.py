@@ -47,6 +47,13 @@ con.execute("""CREATE TABLE check_data_counts AS
                SELECT * FROM read_csv('data/check/material_counts.csv', header = true,
                                       columns = {'period': 'VARCHAR', 'material_count': 'INTEGER'})""")
 
+# AI drafts and reviews are optional: before the first AI run, start from empty files.
+Path("data/ai").mkdir(parents=True, exist_ok=True)
+if not Path("data/ai/drafts.json").exists():
+    Path("data/ai/drafts.json").write_text("[]\n", encoding="utf-8")
+if not Path("data/ai/reviews.csv").exists():
+    Path("data/ai/reviews.csv").write_text("variance_id,status,final_comment,reviewer_note\n", encoding="utf-8")
+
 # 3. All calculations: the SQL files, in order.
 for sql_file in sorted(Path("sql").glob("*.sql")):
     con.execute(sql_file.read_text(encoding="utf-8"))
@@ -97,10 +104,12 @@ EXPORTS = {
     "account_month": "SELECT * FROM v_account_month ORDER BY period, account_no, cost_centre",
     "flexed_materials": "SELECT * FROM v_flexed_budget ORDER BY period, account_no",
     "account_trend": "SELECT * FROM v_account_trend ORDER BY end_period, account_no, cost_centre, month_no",
-    # Only lines behind a material variance, to keep the file small.
+    # Only lines behind a material variance (total or price), to keep the file small.
     "transactions": """SELECT * FROM v_transactions
-                       WHERE variance_id IN (SELECT variance_id FROM v_material_variances)
-                       ORDER BY variance_id, posting_date, line_id""",
+                       WHERE cell_id IN (SELECT cell_id FROM v_material_variances)
+                       ORDER BY cell_id, posting_date, line_id""",
+    # AI draft and controller's final comment side by side.
+    "comments": "SELECT * FROM v_comments ORDER BY period, rank_in_month",
 }
 
 EXPORT.mkdir(parents=True, exist_ok=True)

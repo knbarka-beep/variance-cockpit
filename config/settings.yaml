@@ -190,3 +190,25 @@ events:
     period: "2026-09"
     extra_dkk: 120000
     transactions: 25
+
+# AI draft comments (scripts/draft_comments.py).
+ai:
+  # Models to try, in order (see: python scripts/draft_comments.py --list-models).
+  # When a model's free-tier quota is used up, it is not found, or it keeps failing after
+  # retries, the run moves to the next. (gemini-2.5-flash and -lite are listed by the API
+  # but returned 'not found' for this key, so they are not in the list.)
+  models:
+    - gemini-3.8-flash
+    - gemini-3.7-flash
+    - gemini-3.6-flash
+    - gemini-3.5-flash
+    - gemini-3.5-flash-lite
+    - gemini-3.1-flash-lite
+  temperature: 0.2
+  max_calls_per_run: 100 # hard cap on API calls per run
+  seconds_between_calls: 7 # about 8 calls a minute, inside the free-tier rate limit
+  max_ledger_lines: 40 # largest lines shown to the model; the rest are summarised
+  company_context: >-
+    Odense Demo Manufacturing ApS (fictional), a Danish manufacturer of machined and welded
+    components for industrial customers; revenue about DKK 120m, about 80 employees,
+    fiscal year October-September.

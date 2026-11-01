@@ -14,6 +14,7 @@ raw CSV files ──► 01 base tables ──► 02 v_account_month ──┬─
                                                           └─► 09 v_account_trend
                      01 base tables ──► 08 v_transactions
                      everything     ──► 10 v_checks (reconciliation)
+       07 + AI drafts + reviews     ──► 11 v_comments
 ```
 
 **Why views?** A view is a saved query. It holds no data of its own; it is recalculated from the base tables every time. Every number on the dashboard therefore comes from one place, and it can always be traced back to the ledger.
@@ -96,14 +97,14 @@ Against the plain budget, materials look 165k over budget, which is under the 5 
 
 **Question:** What are the headline numbers for the top of the dashboard?
 
-**Key SQL idea:** a **pivot**: turning rows into columns. `MAX(actual_dkk) FILTER (WHERE pl_group = 'Revenue')` picks the revenue row's value into a revenue column. The material variance count uses `COUNT(*) FILTER (WHERE material)`, and the YTD count is a running total of the monthly counts (window function again).
+**Key SQL idea:** a **pivot**: turning rows into columns. `MAX(actual_dkk) FILTER (WHERE pl_group = 'Revenue')` picks the revenue row's value into a revenue column. The material variance count uses `COUNT(*) FILTER (WHERE material)`. It is only given for `basis = 'month'`. For YTD it is NULL (`CASE WHEN basis = 'month' THEN ... END`), because materiality is judged month by month.
 
 **Example rows:** September 2026
 
 | basis | revenue actual | revenue budget | rev. var % | EBITDA actual | EBITDA budget | EBITDA var % | margin actual | margin budget | material |
 |---|---|---|---|---|---|---|---|---|---|
 | month | 10,258,394 | 10,764,706 | -4.70 | 252,317 | 1,548,922 | -83.71 | 2.46 | 14.39 | 5 |
-| ytd | 120,562,979 | 122,000,000 | -1.18 | 11,201,701 | 14,640,000 | -23.49 | 9.29 | 12.00 | 37 |
+| ytd | 120,562,979 | 122,000,000 | -1.18 | 11,201,701 | 14,640,000 | -23.49 | 9.29 | 12.00 | NULL |
 
 ## 06 v_ebitda_bridge
 
@@ -126,23 +127,34 @@ Against the plain budget, materials look 165k over budget, which is under the 5 
 
 **Question:** Which variances need a comment this month, biggest first?
 
-**Key SQL idea:** `WHERE material` to filter, plus the window function `ROW_NUMBER() OVER (PARTITION BY period ORDER BY ABS(variance_profit_dkk) DESC)` to rank within each month. The `variance_id` is built from the row's own keys with `concat_ws('_', period, account_no, cost_centre)`. It is the same every time the data is rebuilt, so the AI layer can use it as a key.
+**Key SQL idea:** two filtered lists stacked with `UNION ALL`:
 
-**Example row:**
+- **`total` rows:** actual vs budget, from v_account_month `WHERE material`.
+- **`price` rows:** actual vs flexed budget for raw materials and packaging, from v_flexed_budget `WHERE price_usage_material`. These catch a price increase that lower volume hides in the total.
 
-| rank | variance_id | account | actual | budget | variance_profit_dkk | % |
-|---|---|---|---|---|---|---|
-| 2 | 2026-09_4010_Production | Repairs and maintenance | 500,653.91 | 264,333.33 | -236,320.58 | -89.40 |
+The window function `ROW_NUMBER() OVER (PARTITION BY period ORDER BY ABS(variance_profit_dkk) DESC)` ranks the rows within each month.
+
+Two ids are built from the row's own keys with `concat_ws`, so they are the same every time the data is rebuilt:
+
+- **`variance_id`:** the key for the AI layer, e.g. `2026-09_4010_Production`, or `2026-09_2010_Production_price` for a price row.
+- **`cell_id`:** the same id without the `_price` suffix. It links a row to its ledger lines in v_transactions.
+
+**Example rows:**
+
+| rank | variance_id | type | account | actual | budget | flexed budget | variance_profit_dkk | % |
+|---|---|---|---|---|---|---|---|---|
+| 2 | 2026-09_2010_Production_price | price | Raw materials | 4,476,520.35 | 4,311,264.71 | 4,108,486.75 | -368,033.60 | -8.96 |
+| 3 | 2026-09_4010_Production | total | Repairs and maintenance | 500,653.91 | 264,333.33 | | -236,320.58 | -89.40 |
 
 ## 08 v_transactions
 
 **Question:** Which ledger lines make up this variance? (drill-down)
 
-**Key SQL idea:** a plain `JOIN` of the ledger to accounts and periods, to add names, P&L group and fiscal year. The line gets the same `variance_id` recipe as view 07, so `WHERE variance_id = '2026-09_4010_Production'` finds its lines.
+**Key SQL idea:** a plain `JOIN` of the ledger to accounts and periods, to add names, P&L group and fiscal year. Each line gets a `cell_id` (period_account_costcentre), so `WHERE cell_id = '2026-09_4010_Production'` finds the lines behind a variance.
 
 **Example row:**
 
-| line_id | posting_date | account | counterparty | description | amount_ledger_dkk | variance_id |
+| line_id | posting_date | account | counterparty | description | amount_ledger_dkk | cell_id |
 |---|---|---|---|---|---|---|
 | 2062 | 2026-09-18 | 4010 Repairs and maintenance | Hydra-Service Danmark ApS | Invoice 48213, emergency repair hydraulic press line 2, parts and labour | 350,000.00 | 2026-09_4010_Production |
 
@@ -173,8 +185,15 @@ Against the plain budget, materials look 165k over budget, which is under the 5 
 | 4 | Flexed: price/usage + volume = total | The split explains the whole variance |
 | 5 | Ledger count and total = raw CSV | Nothing lost when loading the file |
 | 6 | Material count = check_data.py | SQL and an independent pandas script agree |
+| 7 | Price rows = v_flexed_budget | The price rows in the material list are exactly the material price/usage variances |
 
 I tested that the checks can actually fail. Changing one ledger line by DKK 0.01 makes check 5 fail, and a wrong count makes check 6 fail. Checks 1 to 4 guard against mistakes in the SQL logic itself.
+
+## 11 v_comments
+
+**Question:** For each material variance, what did the AI draft, and what did the controller decide?
+
+**Key SQL idea:** the AI drafts (`data/ai/drafts.json`) and the reviews (`data/ai/reviews.csv`) are loaded as tables. A `LEFT JOIN` puts them next to v_material_variances, so variances without a draft or review still appear (with NULLs). The draft's output is a nested JSON object; DuckDB reads a field inside it with dot notation, e.g. `d.output.comment`. See [ai-layer.md](ai-layer.md).
 
 ## Interview one-liners
 
