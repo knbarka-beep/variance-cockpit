@@ -28,6 +28,8 @@ One JSON document per material variance, built only from the DuckDB views:
 - **The variance:** period, account, cost centre, variance type (`total` vs budget, or `price` vs flexed budget), actual, budget (and flexed budget for price rows), variance in DKK and %, and whether it is favourable.
 - **For raw materials and packaging:** the price/volume split.
 - **The ledger lines behind the variance:** date, counterparty, description and amount, largest first. At most 40 lines are shown; the rest are summarised as a count and a total.
+- **For revenue variances (from v2):** revenue per customer this month vs that customer's average for the previous 3 months, in amount and %, largest change first. It comes from the SQL view `v_customer_month`. It shows whether one customer explains the variance. The 3-month average is not seasonally adjusted.
+- **For cost variances (from v2):** the largest ledger line is marked, with its size as a percentage of the variance (`largest_line_share_of_variance_pct`).
 - **The same account and cost centre for the previous 3 months:** so the model can tell a one-off from a persistent change.
 - **The following month, if available:** so a reversal or correction is visible. This is given for every variance, not only for energy: the script must not know which variances are planted events.
 
@@ -96,6 +98,26 @@ Bare small numbers without `DKK` or a unit (like "3 months" or "line 2") are ski
 - **Planted events:** does the draft for each event name the expected cause category? Event 6 (scattered small purchases) must also be flagged `no_clear_cause = true`.
 - **Noise variances** (material, but no planted event behind them): how many drafts claim a specific cause anyway? These are possible hallucinations, listed for review. Some may be fair readings of the ledger lines; that is for the controller to judge.
 - **Figure check pass rate** and the 60-word limit.
+- **Sign errors:** an amount written with a minus sign, or "favourable" and "unfavourable" used the wrong way round.
+
+The evaluation compares versions side by side and writes both to `data/ai/evaluation.json`.
+
+## Versions
+
+| | v1 (baseline) | v2 |
+|---|---|---|
+| Prompt | `prompts/v1/variance_comment.md` | `prompts/variance_comment.md` |
+| Drafts | `data/ai/v1/drafts.json` (kept as the baseline) | `data/ai/drafts.json`, each with `prompt_version: v2` |
+| Model | Fallback across 3.8 Flash, 3.6 Flash and 3.5 Flash-Lite as quotas ran out | `gemini-3.5-flash-lite` only, so all drafts are comparable |
+| Input | Ledger lines, previous 3 months, following month, price/volume split | Same, plus the customer table for revenue and the marked largest line for costs |
+
+v2 prompt changes:
+- Name a specific cause only if one ledger line, one counterparty or one customer explains about half of the variance. Otherwise say "unclear" and what to check.
+- Use "persistent" or "price" only if the previous months show the same direction and size.
+- Write amounts as positive numbers, and use the words favourable and unfavourable for direction.
+- Never calculate new totals or differences.
+
+v1 results (71 drafts): 10/15 planted-event variances correct, 30/55 noise drafts claiming a cause, 69/71 figure check passed, 12/71 sign errors.
 
 ## Known limits
 

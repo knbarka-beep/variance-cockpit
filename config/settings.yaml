@@ -193,17 +193,16 @@ events:
 
 # AI draft comments (scripts/draft_comments.py).
 ai:
+  # Prompt version stored on each draft. The current prompt is prompts/variance_comment.md;
+  # older versions are kept in prompts/v1/ etc.
+  prompt_version: v2
   # Models to try, in order (see: python scripts/draft_comments.py --list-models).
   # When a model's free-tier quota is used up, it is not found, or it keeps failing after
-  # retries, the run moves to the next. (gemini-2.5-flash and -lite are listed by the API
-  # but returned 'not found' for this key, so they are not in the list.)
+  # retries, the run moves to the next; when none is left, the run stops and saves.
+  # v2 uses ONE model on purpose, so all 71 drafts are comparable (no fallback).
+  # v1 used: gemini-3.8-flash, 3.7-flash, 3.6-flash, 3.5-flash, 3.5-flash-lite, 3.1-flash-lite.
   models:
-    - gemini-3.8-flash
-    - gemini-3.7-flash
-    - gemini-3.6-flash
-    - gemini-3.5-flash
     - gemini-3.5-flash-lite
-    - gemini-3.1-flash-lite
   temperature: 0.2
   max_calls_per_run: 100 # hard cap on API calls per run
   seconds_between_calls: 7 # about 8 calls a minute, inside the free-tier rate limit

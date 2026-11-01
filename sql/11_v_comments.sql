@@ -11,7 +11,7 @@
 
 CREATE OR REPLACE TABLE ai_drafts AS
 SELECT * FROM read_json('data/ai/drafts.json', format = 'array', columns = {
-    'variance_id': 'VARCHAR', 'input_hash': 'VARCHAR', 'model': 'VARCHAR', 'created_at': 'VARCHAR',  -- kept as ISO text, e.g. 2026-11-01T20:41:07+00:00
+    'variance_id': 'VARCHAR', 'input_hash': 'VARCHAR', 'model': 'VARCHAR', 'prompt_version': 'VARCHAR', 'created_at': 'VARCHAR',  -- kept as ISO text, e.g. 2026-11-01T20:41:07+00:00
     'output': 'STRUCT(comment VARCHAR, cause_category VARCHAR, persistence VARCHAR,
                       figures_cited DOUBLE[], no_clear_cause BOOLEAN)',
     'figure_check': 'STRUCT(figures_found INTEGER, figures_matched INTEGER, unmatched VARCHAR[],
@@ -39,6 +39,7 @@ SELECT
     d.figure_check.check_passed     AS figure_check_passed,
     d.figure_check.unmatched        AS figure_check_unmatched,
     d.model                         AS ai_model,
+    d.prompt_version                AS ai_prompt_version,
     d.created_at                    AS ai_created_at,
     NULLIF(r.status, '')            AS review_status,
     NULLIF(r.final_comment, '')     AS final_comment,

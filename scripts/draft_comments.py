@@ -44,7 +44,7 @@ sys.addaudithook(_block_answer_key)
 
 cfg = yaml.safe_load((ROOT / "config" / "settings.yaml").read_text(encoding="utf-8"))
 ai = cfg["ai"]
-PROMPT = (ROOT / "prompts" / "variance_comment.md").read_text(encoding="utf-8")
+PROMPT = (ROOT / "prompts" / "variance_comment.md").read_text(encoding="utf-8")  # current version; old ones in prompts/v1/ ...
 AI_DIR = ROOT / "data" / "ai"
 DRAFTS = AI_DIR / "drafts.json"
 REVIEWS = AI_DIR / "reviews.csv"
@@ -117,6 +117,21 @@ def build_input(con, v):
         ORDER BY ABS(amount_dkk) DESC, line_id""", [v["cell_id"]])
     for line in lines:
         line["date"] = str(line["date"])
+
+    if v["pl_group"] == "Revenue":
+        # Which customer explains it? This month vs each customer's average of the 3 months before.
+        inp["revenue_by_customer"] = rows(con, """
+            SELECT customer, revenue_dkk, avg_prev_3_months_dkk, change_dkk, change_pct
+            FROM v_customer_month
+            WHERE period = ? AND account_no = ? AND cost_centre = ?
+            ORDER BY ABS(change_dkk) DESC NULLS LAST, customer""",
+            [v["period"], v["account_no"], v["cost_centre"]])
+    elif lines:
+        # Cost variance: mark the largest line and how big it is compared with the variance.
+        lines[0]["largest_line"] = True
+        inp["largest_line_share_of_variance_pct"] = round(
+            100 * abs(lines[0]["amount_dkk"]) / abs(v["variance_profit_dkk"]), 1)
+
     n = ai["max_ledger_lines"]
     inp["ledger_lines"] = lines[:n]
     if len(lines) > n:
@@ -301,6 +316,7 @@ def main():
                 print("Every model in the list is unavailable. Stopping.")
                 break
             drafts[vid] = {"variance_id": vid, "input_hash": hashes[vid], "model": available[0],
+                           "prompt_version": ai["prompt_version"],
                            "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                            "output": draft.model_dump()}
             save(drafts, inputs)  # after every draft, so progress is never lost

@@ -195,6 +195,20 @@ I tested that the checks can actually fail. Changing one ledger line by DKK 0.01
 
 **Key SQL idea:** the AI drafts (`data/ai/drafts.json`) and the reviews (`data/ai/reviews.csv`) are loaded as tables. A `LEFT JOIN` puts them next to v_material_variances, so variances without a draft or review still appear (with NULLs). The draft's output is a nested JSON object; DuckDB reads a field inside it with dot notation, e.g. `d.output.comment`. See [ai-layer.md](ai-layer.md).
 
+## 12 v_customer_month
+
+**Question:** Which customer explains a revenue variance?
+
+**Key SQL idea:** first a grid of every customer × every month (`CROSS JOIN`), with the revenue `LEFT JOIN`ed onto it, so a month without invoices counts as 0 instead of being missing. Then a **window function with a frame**: `AVG(revenue) OVER (PARTITION BY customer ORDER BY month ROWS BETWEEN 3 PRECEDING AND 1 PRECEDING)` is the average of the three months *before* this one. The month itself is left out, so it can be compared against them.
+
+**Example row:** the key customer, August 2026
+
+| customer | period | revenue | avg previous 3 months | change | change % |
+|---|---|---|---|---|---|
+| Nordvik Maskinfabrik A/S | 2026-08 | 1,537,556.21 | 1,820,452.04 | -282,895.83 | -15.54 |
+
+Every other domestic customer was +3 to +6 % that month (July was a low month), so Nordvik stands out.
+
 ## Interview one-liners
 
 - **"Why not calculate in Python or in the dashboard?"** One place for every number. The dashboard only displays, so it cannot disagree with itself.
