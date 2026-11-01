@@ -135,6 +135,78 @@
     ],
     "noise_variances": 55,
     "noise_drafted": 55,
+    "noise_false_claims": 9,
+    "noise_false_claims_for_review": [
+      {
+        "variance_id": "2025-05_4010_Production",
+        "reasons": [
+          "persistent"
+        ],
+        "comment": "Repairs and maintenance were unfavourable by DKK 73.837,20. The largest posting is spare parts from Fynsk Maskinreparation ApS at DKK 105.499,58. As the ledger lines do not show a clear cause for exceeding budget, we suggest checking transactions with the cost owner. Higher spending looks persistent, as June is also above budget at DKK 320.215,16."
+      },
+      {
+        "variance_id": "2025-06_4010_Production",
+        "reasons": [
+          "persistent"
+        ],
+        "comment": "The unfavourable variance of DKK 64.548,49 was mainly driven by an invoice from Fynsk Maskinreparation ApS of DKK 111.911,76. The ledger lines do not show a clear cause for the variance; cost owners and transactions should be reviewed. Higher spending in May (DKK 329.503,87) and July (DKK 380.370,31) suggests the issue is persistent."
+      },
+      {
+        "variance_id": "2025-07_4010_Production",
+        "reasons": [
+          "cause price",
+          "persistent"
+        ],
+        "comment": "Repairs and maintenance in production is unfavourable by DKK 124.703,64 against budget, driven mainly by ElektroTeknik Tarup ApS with invoice 41005 at DKK 146.045,15 and invoice 19861 at DKK 97.842,26, alongside Hydra-Service Danmark ApS at DKK 93.474,03. Costs have exceeded budget consistently over recent months, including DKK 365.908,27 in August, indicating persistent high maintenance activity."
+      },
+      {
+        "variance_id": "2025-08_4010_Production",
+        "reasons": [
+          "persistent"
+        ],
+        "comment": "The unfavourable variance of DKK -110.241,60 on repairs and maintenance is driven by multiple service invoices, led by Hydra-Service Danmark ApS at DKK 163.775,70 and Fynsk Maskinreparation ApS at DKK 112.309,00. As overruns persist across multiple months, we should review the maintenance schedule and cost owner approvals."
+      },
+      {
+        "variance_id": "2026-03_4050_Sales",
+        "reasons": [
+          "cause price",
+          "persistent"
+        ],
+        "comment": "Marketing costs for March 2026 are unfavourable by DKK 77.127,36 compared to budget. The main driver is Kommunikationshuset Fyn ApS with DKK 141.709,51 for product brochures, alongside Messepartner Danmark ApS with DKK 67.584,52 for a trade fair stand. Based on the ledger lines and other months, this looks persistent across marketing campaigns."
+      },
+      {
+        "variance_id": "2026-05_4010_Production",
+        "reasons": [
+          "cause price",
+          "persistent"
+        ],
+        "comment": "The unfavourable variance of DKK 89.607,03 in Repairs and maintenance is mainly driven by external service invoices, including DKK 102.928,12 from ElektroTeknik Tarup ApS and DKK 89.742,60 from Hydra-Service Danmark ApS. As spending varies between DKK 148.739,49 and DKK 371.815,61 across recent months, this fluctuation appears persistent depending on maintenance schedules."
+      },
+      {
+        "variance_id": "2026-05_4040_Administration",
+        "reasons": [
+          "cause price",
+          "persistent"
+        ],
+        "comment": "The IT costs variance of DKK 87.804,02 is favourable. The ledger lines show normal operational postings such as ERP licence at DKK 31.579,51 and cloud hosting at DKK 24.442,05. Similar variances appeared in previous months like DKK 84.308,20, indicating a persistent budget overestimation rather than a single timing event."
+      },
+      {
+        "variance_id": "2026-06_4010_Production",
+        "reasons": [
+          "cause price",
+          "persistent"
+        ],
+        "comment": "The unfavourable variance of DKK 107.482,28 in repairs and maintenance is driven by higher external maintenance costs, including invoice 44831 from ElektroTeknik Tarup ApS at DKK 138.194,99 and invoice 49536 from Fynsk Maskinreparation ApS at DKK 107.366,69. Given the fluctuation across previous months, this appears to be persistent rather than timing-related."
+      },
+      {
+        "variance_id": "2026-06_4050_Sales",
+        "reasons": [
+          "cause price",
+          "persistent"
+        ],
+        "comment": "Marketing costs were unfavourable by DKK 53.765,15, driven by trade fair stand invoices from Messepartner Danmark ApS of DKK 112.298,42 and DKK 73.633,40. Given the recurring nature of trade fair expenses observed in previous months, this variance appears persistent rather than a one-off event."
+      }
+    ],
     "noise_drafts_claiming_a_cause": 30,
     "noise_claims_for_review": [
       {

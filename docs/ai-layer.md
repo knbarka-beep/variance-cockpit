@@ -29,7 +29,7 @@ One JSON document per material variance, built only from the DuckDB views:
 - **For raw materials and packaging:** the price/volume split.
 - **The ledger lines behind the variance:** date, counterparty, description and amount, largest first. At most 40 lines are shown; the rest are summarised as a count and a total.
 - **For revenue variances (from v2):** revenue per customer this month vs that customer's average for the previous 3 months, in amount and %, largest change first. It comes from the SQL view `v_customer_month`. It shows whether one customer explains the variance. The 3-month average is not seasonally adjusted.
-- **For cost variances (from v2):** cost per supplier this month vs that supplier's average for the previous 3 months on the same account and cost centre, with the number of lines. It comes from the SQL view `v_counterparty_month`. Lines without a counterparty (payroll, card payments, expense claims) are grouped as "(no counterparty)". The largest ledger line is also marked, for information only.
+- **For cost variances except raw materials and packaging (from v2):** cost per supplier this month vs that supplier's average for the previous 3 months on the same account and cost centre, with the number of lines. It comes from the SQL view `v_counterparty_month`. Lines without a counterparty (payroll, card payments, expense claims) are grouped as "(no counterparty)". The largest ledger line is also marked, for information only.
 - **For each customer or supplier (from v2):** its change as a share of the variance (`change_share_of_variance_pct`). Positive means it moves in the same direction as the variance.
 - **The same account and cost centre for the previous 3 months:** so the model can tell a one-off from a persistent change.
 - **The following month, if available:** so a reversal or correction is visible. This is given for every variance, not only for energy: the script must not know which variances are planted events.
@@ -97,7 +97,9 @@ Bare small numbers without `DKK` or a unit (like "3 months" or "line 2") are ski
 `evaluate_ai.py` is a first automatic pass. The controller judges the comments themselves.
 
 - **Planted events:** does the draft for each event name the expected cause category? Event 6 (scattered small purchases) must also be flagged `no_clear_cause = true`.
-- **Noise variances** (material, but no planted event behind them): how many drafts claim a specific cause anyway? These are possible hallucinations, listed for review. Some may be fair readings of the ledger lines; that is for the controller to judge.
+- **Noise variances** (material, but no planted event behind them), two measures:
+  - **False claims** (main measure): the draft says `price` or `persistent`, or it names a counterparty or invoice number that is not behind the variance. Naming the supplier or invoice that really drives it, as one-off or timing, is a correct reading of the ledger and does not count.
+  - **Any cause (strict):** any category other than `unclear`. Kept for comparison.
 - **Figure check pass rate** and the 60-word limit.
 - **Sign errors:** an amount written with a minus sign, or "favourable" and "unfavourable" used the wrong way round.
 
@@ -114,11 +116,12 @@ The evaluation compares versions side by side and writes both to `data/ai/evalua
 
 v2 prompt changes:
 - Name a specific cause only if one supplier (costs) or one customer (revenue) explains about half of the variance or more, measured as its change against its own 3-month average. "(no counterparty)" counts only as a single line (such as one payroll line), not as many small card payments. Otherwise say "unclear" and what to check.
-- Use "persistent" or "price" only if the previous months show the same direction and size.
+- Use "persistent" only if the previous months show the same direction and size. A `price` row may be called "price" from the first month, because the flexed budget already removes volume.
+- Raw materials and packaging are explained by the price/volume split, not by suppliers. Their supplier mix varies at random in this data, so they get no supplier table. Price rows get previous and following months on the same flexed basis, plus a short note.
 - Write amounts as positive numbers, and use the words favourable and unfavourable for direction.
 - Never calculate new totals or differences.
 
-v1 results (71 drafts): 10/15 planted-event variances correct, 30/55 noise drafts claiming a cause, 69/71 figure check passed, 12/71 sign errors.
+v1 results (71 drafts): 10/15 planted-event variances correct, 9/55 noise false claims (strict: 30/55 claiming any cause), 69/71 figure check passed, 12/71 sign errors.
 
 ## Known limits
 

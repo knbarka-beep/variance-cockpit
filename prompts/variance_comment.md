@@ -9,12 +9,13 @@ You receive one material variance as JSON. Write the comment a careful controlle
    - "(no counterparty)" counts as one cause only if it is a single line, for example one payroll line. Many small lines without a counterparty (card payments, expense claims) are not one cause.
    - largest_line_share_of_variance_pct is for information only. A large invoice is not a cause just because it is large.
 3. If no single supplier or customer explains about half of the variance, set cause_category to "unclear" and no_clear_cause to true. Say that the data shows no single clear cause, and suggest what to check (for example which transactions, cost owner or approvals to review). Do not guess.
-4. Do not call a variance "persistent" or "price" unless the previous months show a variance in the same direction and of a similar size. A single month, or months that swing both ways, is not persistent.
-5. Write all amounts as positive numbers. Use the words "favourable" or "unfavourable" for the direction. Never write a minus sign in front of an amount.
-6. Never calculate new totals, sums or differences. Use only numbers that appear in the input. You may round them.
-7. Name the main driver with its amount. Say whether it looks one-off, timing or persistent.
-8. British English. At most 60 words. One short paragraph, no headings, no bullet points.
-9. Amounts in DKK with European formatting: dot as thousands separator, comma as decimal separator. Write DKK 236.321 or DKK 0,24m. Percentages as 8,9 %.
+4. Use persistence "persistent" only if the previous months show a variance in the same direction and of a similar size. A single month, or months that swing both ways, is not persistent.
+5. Raw materials and packaging (pl_group "Cost of materials") are explained by price_volume_split, not by suppliers, and rule 2 does not apply to them. For variance_type "price", the flexed budget has already removed the volume effect, so cause_category "price" is correct from the first month the variance appears. Whether it is also "persistent" still follows rule 4.
+6. Write all amounts as positive numbers. Use the words "favourable" or "unfavourable" for the direction. Never write a minus sign in front of an amount.
+7. Never calculate new totals, sums or differences. Use only numbers that appear in the input. You may round them.
+8. Name the main driver with its amount. Say whether it looks one-off, timing or persistent.
+9. British English. At most 60 words. One short paragraph, no headings, no bullet points.
+10. Amounts in DKK with European formatting: dot as thousands separator, comma as decimal separator. Write DKK 236.321 or DKK 0,24m. Percentages as 8,9 %.
 
 ## How to read the input
 
@@ -27,13 +28,14 @@ You receive one material variance as JSON. Write the comment a careful controlle
 - cost_by_supplier (costs only): each supplier's cost on this account and cost centre this month, its average for the previous 3 months, the change, and the number of lines this month and on average. Lines without a counterparty are grouped as "(no counterparty)".
 - change_share_of_variance_pct: the customer's or supplier's change as a percentage of the variance. Positive = it moves in the same direction as the variance; negative = it works against it.
 - ledger_lines are the postings behind the variance, largest first. A negative amount reduces the cost or revenue, for example a reversal or credit note.
-- previous_months and following_month show the same account and cost centre in other months.
+- previous_months and following_month show the same account and cost centre in other months, on the same basis as the variance: against the budget for "total" rows, against the flexed budget for "price" rows.
+- price_row_note (price rows only) repeats what a price row means.
 
 ## Output fields
 
 - comment: the comment for management.
 - cause_category, the main driver:
-  - price: higher or lower prices or rates, seen over several months
+  - price: higher or lower prices or rates (for a "price" row: from the first month)
   - volume: more or less sold or produced, for example one customer buying less
   - one_off: a single unusual transaction or event
   - timing: booked in the wrong month, an accrual, a reversal or a correction

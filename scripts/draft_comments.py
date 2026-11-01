@@ -73,10 +73,17 @@ def rows(con, sql, params=()):
 
 
 def month_rows(con, v, offsets):
-    """Actual and budget for the same account and cost centre, N months before/after."""
+    """The same account and cost centre, N months before/after, on the same basis as the variance:
+    actual vs budget for 'total' rows, actual vs flexed budget (price/usage variance) for 'price' rows."""
+    if v["variance_type"] == "price":
+        columns = "period, actual_dkk, flexed_budget_dkk, price_usage_variance_profit_dkk AS variance_dkk"
+        view = "v_flexed_budget"
+    else:
+        columns = "period, actual_dkk, budget_dkk, variance_profit_dkk AS variance_dkk"
+        view = "v_account_month"
     return rows(con, f"""
-        SELECT period, actual_dkk, budget_dkk, variance_profit_dkk AS variance_dkk
-        FROM v_account_month
+        SELECT {columns}
+        FROM {view}
         WHERE account_no = ? AND cost_centre = ?
           AND period_date IN ({", ".join("CAST(? AS DATE) + to_months(?)" for _ in offsets)})
         ORDER BY period""",
@@ -98,6 +105,10 @@ def build_input(con, v):
     }
     if is_price:
         inp["flexed_budget_dkk"] = v["flexed_budget_dkk"]
+        inp["price_row_note"] = (
+            "This variance is measured against the flexed budget (the budget scaled to the actual "
+            "sales volume), so the volume effect is already removed. What remains is a price or usage "
+            "effect in this month. previous_months and following_month are on the same flexed basis.")
     inp |= {"variance_dkk": v["variance_profit_dkk"], "variance_pct": v["variance_pct"],
             "favourable": v["favourable"]}
 
@@ -124,7 +135,10 @@ def build_input(con, v):
     # (Revenue: more revenue = higher profit. Costs: more cost = lower profit, hence the minus.)
     keys = [v["period"], v["account_no"], v["cost_centre"]]
     profit_direction = 1 if v["pl_group"] == "Revenue" else -1
-    if v["pl_group"] == "Revenue":
+    table = []
+    if v["pl_group"] == "Cost of materials":
+        pass  # explained by price_volume_split; the supplier mix of materials varies at random
+    elif v["pl_group"] == "Revenue":
         table = rows(con, """
             SELECT customer, revenue_dkk, avg_prev_3_months_dkk, change_dkk, change_pct
             FROM v_customer_month WHERE period = ? AND account_no = ? AND cost_centre = ?
