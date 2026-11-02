@@ -167,9 +167,9 @@ rows = [
     ("Sign errors", lambda r: f"{r['sign_errors']}/{r['drafts']}"),
     ("Within 60 words", lambda r: f"{r['within_60_words']}/{r['drafts']}"),
 ]
-print(f"\n{'':32}{'v1':<42}{'v2':<42}")
+print(f"\n{'':32}{'v1':<46}{'v2':<46}")
 for label, f in rows:
-    print(f"{label:<32}{cell(result["v1"], f):<42}{cell(result["v2"], f):<42}")
+    print(f"{label:<32}{cell(result["v1"], f):<46}{cell(result["v2"], f):<46}")
 for name, r in result.items():
     if r and r["noise_false_claims"]:
         print(f"\n{name} false claims on noise variances:")

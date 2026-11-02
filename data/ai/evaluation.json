@@ -440,5 +440,387 @@
     ],
     "within_60_words": 71
   },
-  "v2": null
+  "v2": {
+    "drafts": 71,
+    "drafts_per_model": {
+      "gemini-3.5-flash-lite": 71
+    },
+    "planted_events_correct": 13,
+    "planted_events_total": 15,
+    "planted_events": [
+      {
+        "event_id": 1,
+        "expected": "price",
+        "correct": 4,
+        "total": 4,
+        "variances": [
+          {
+            "variance_id": "2026-06_2010_Production_price",
+            "cause_category": "price",
+            "correct": true
+          },
+          {
+            "variance_id": "2026-07_2010_Production_price",
+            "cause_category": "price",
+            "correct": true
+          },
+          {
+            "variance_id": "2026-08_2010_Production_price",
+            "cause_category": "price",
+            "correct": true
+          },
+          {
+            "variance_id": "2026-09_2010_Production_price",
+            "cause_category": "price",
+            "correct": true
+          }
+        ]
+      },
+      {
+        "event_id": 2,
+        "expected": "one_off",
+        "correct": 1,
+        "total": 1,
+        "variances": [
+          {
+            "variance_id": "2026-09_4010_Production",
+            "cause_category": "one_off",
+            "correct": true
+          }
+        ]
+      },
+      {
+        "event_id": 3,
+        "expected": "timing",
+        "correct": 2,
+        "total": 2,
+        "variances": [
+          {
+            "variance_id": "2026-07_4020_Production",
+            "cause_category": "timing",
+            "correct": true
+          },
+          {
+            "variance_id": "2026-08_4020_Production",
+            "cause_category": "timing",
+            "correct": true
+          }
+        ]
+      },
+      {
+        "event_id": 4,
+        "expected": "volume",
+        "correct": 1,
+        "total": 3,
+        "variances": [
+          {
+            "variance_id": "2026-07_1010_Sales",
+            "cause_category": "unclear",
+            "correct": false
+          },
+          {
+            "variance_id": "2026-08_1010_Sales",
+            "cause_category": "volume",
+            "correct": true
+          },
+          {
+            "variance_id": "2026-09_1010_Sales",
+            "cause_category": "unclear",
+            "correct": false
+          }
+        ]
+      },
+      {
+        "event_id": 5,
+        "expected": "staffing",
+        "correct": 4,
+        "total": 4,
+        "variances": [
+          {
+            "variance_id": "2026-08_3020_Production",
+            "cause_category": "staffing",
+            "correct": true
+          },
+          {
+            "variance_id": "2026-08_3030_Production",
+            "cause_category": "staffing",
+            "correct": true
+          },
+          {
+            "variance_id": "2026-09_3020_Production",
+            "cause_category": "staffing",
+            "correct": true
+          },
+          {
+            "variance_id": "2026-09_3030_Production",
+            "cause_category": "staffing",
+            "correct": true
+          }
+        ]
+      },
+      {
+        "event_id": 6,
+        "expected": "unclear",
+        "correct": 1,
+        "total": 1,
+        "variances": [
+          {
+            "variance_id": "2026-09_4090_Administration",
+            "cause_category": "unclear",
+            "correct": true
+          }
+        ]
+      }
+    ],
+    "noise_variances": 55,
+    "noise_drafted": 55,
+    "noise_false_claims": 5,
+    "noise_false_claims_for_review": [
+      {
+        "variance_id": "2024-11_4050_Sales",
+        "reasons": [
+          "persistent"
+        ],
+        "comment": "The marketing account shows an unfavourable variance of DKK 61.728,06, driven mainly by Messepartner Danmark ApS at DKK 103.717,65 for a trade fair stand. This looks like a one-off event. Previous months also show unfavourable variances."
+      },
+      {
+        "variance_id": "2025-01_4040_Administration",
+        "reasons": [
+          "cause price"
+        ],
+        "comment": "IT costs show a favourable variance of DKK 87.752,85, primarily driven by Nordlys Software A/S with a change of DKK 91.947,66. This variance looks unknown as previous months swing both ways."
+      },
+      {
+        "variance_id": "2025-08_4010_Production",
+        "reasons": [
+          "cause price",
+          "persistent"
+        ],
+        "comment": "The unfavourable variance of DKK 110.241,60 is driven by Hydra-Service Danmark ApS, which accounts for 101,7 % of the variance due to higher costs for hydraulic hoses and seals. This variance appears persistent as previous months show unfavourable variances in a similar size."
+      },
+      {
+        "variance_id": "2025-08_4040_Administration",
+        "reasons": [
+          "persistent"
+        ],
+        "comment": "The administration IT costs showed an unfavourable variance of DKK 100.874,97 against budget. The variance is driven by Odense IT-Drift ApS with DKK 59.983,32, representing 59,5 % of the change. This increase looks persistent."
+      },
+      {
+        "variance_id": "2026-03_4040_Administration",
+        "reasons": [
+          "cause price",
+          "persistent"
+        ],
+        "comment": "IT costs showed an unfavourable variance of DKK 111.046,83, mainly driven by Odense IT-Drift ApS with an increase of DKK 115.484,06. As similar high variances occurred in February, this looks persistent."
+      }
+    ],
+    "noise_drafts_claiming_a_cause": 40,
+    "noise_claims_for_review": [
+      {
+        "variance_id": "2024-11_4010_Production",
+        "cause_category": "timing",
+        "comment": "The favourable variance of DKK 158.452,18 on repairs and maintenance is mainly driven by ElektroTeknik Tarup ApS, which had no costs this month compared to an average of DKK 79.378,70 in the previous three months, explaining 50,1 % of the variance. This timing effect looks unknown."
+      },
+      {
+        "variance_id": "2024-11_4040_Administration",
+        "cause_category": "one_off",
+        "comment": "The unfavourable IT costs variance of DKK 55.934,25 was driven by Nordlys Software A/S with an increase of DKK 99.146,85, which explains about half of the variance. This looks one-off."
+      },
+      {
+        "variance_id": "2024-11_4050_Sales",
+        "cause_category": "one_off",
+        "comment": "The marketing account shows an unfavourable variance of DKK 61.728,06, driven mainly by Messepartner Danmark ApS at DKK 103.717,65 for a trade fair stand. This looks like a one-off event. Previous months also show unfavourable variances."
+      },
+      {
+        "variance_id": "2024-12_4050_Sales",
+        "cause_category": "one_off",
+        "comment": "The marketing account shows an unfavourable variance of DKK 53.943,06 driven by Messepartner Danmark ApS with DKK 158.902,08 for a trade fair stand. As previous months swing both ways and the following month shows a favourable variance, this looks like a timing or one-off event rather than a persistent trend."
+      },
+      {
+        "variance_id": "2025-01_4040_Administration",
+        "cause_category": "price",
+        "comment": "IT costs show a favourable variance of DKK 87.752,85, primarily driven by Nordlys Software A/S with a change of DKK 91.947,66. This variance looks unknown as previous months swing both ways."
+      },
+      {
+        "variance_id": "2025-02_4010_Production",
+        "cause_category": "one_off",
+        "comment": "The favourable variance of DKK 101.918,75 on repairs and maintenance is mainly driven by Hydra-Service Danmark ApS, whose costs decreased by DKK 62.171,79, explaining 61,0 % of the variance. This variance looks one-off as previous months swing both ways."
+      },
+      {
+        "variance_id": "2025-02_4050_Sales",
+        "cause_category": "timing",
+        "comment": "The marketing cost variance of DKK 109.452,58 is favourable. Messepartner Danmark ApS is the main driver, accounting for 92,2 % of the variance as no costs were booked this month compared to an average of DKK 100.947,51. This looks like timing."
+      },
+      {
+        "variance_id": "2025-03_4050_Sales",
+        "cause_category": "timing",
+        "comment": "Marketing costs showed a favourable variance of DKK 109.452,58, mainly driven by Messepartner Danmark ApS. This looks like timing."
+      },
+      {
+        "variance_id": "2025-04_4040_Administration",
+        "cause_category": "one_off",
+        "comment": "The unfavourable variance of DKK 100.874,97 on IT costs was mainly driven by Nordlys Software A/S with an increase of DKK 115.770,78, accounting for about half of the variance. This looks one-off."
+      },
+      {
+        "variance_id": "2025-05_4010_Production",
+        "cause_category": "one_off",
+        "comment": "Repairs and maintenance showed an unfavourable variance of DKK 73.837,20, mainly driven by Fynsk Maskinreparation ApS with 113,0 % change share of the variance. This increase looks one-off rather than persistent."
+      },
+      {
+        "variance_id": "2025-05_4060_Sales",
+        "cause_category": "one_off",
+        "comment": "The sales travel account shows an unfavourable variance of DKK 56.788,97, driven mainly by Nordrejser Erhverv ApS. Previous months show variances in the same direction, but the following month swings back, indicating this month's spike is one-off."
+      },
+      {
+        "variance_id": "2025-06_4010_Production",
+        "cause_category": "one_off",
+        "comment": "Repairs and maintenance showed an unfavourable variance of DKK 64.548,49. Fynsk Maskinreparation ApS is the main driver with costs of DKK 200.879,96, representing 256,7 % of the variance share due to spare parts invoices. The previous months show fluctuating variances without a consistent trend, making the persistence unknown."
+      },
+      {
+        "variance_id": "2025-06_4040_Administration",
+        "cause_category": "timing",
+        "comment": "The administration IT costs variance of DKK 129.225,03 is favourable, driven mainly by Nordlys Software A/S with a cost reduction of DKK 78.897,89 and Odense IT-Drift ApS with DKK 66.563,78. The previous months swing both ways, so this variance looks like timing."
+      },
+      {
+        "variance_id": "2025-06_4050_Sales",
+        "cause_category": "timing",
+        "comment": "The marketing variance of DKK 61.561,40 is favourable, mainly driven by Messepartner Danmark ApS with zero costs against an average of DKK 32.036,76. This looks like timing."
+      },
+      {
+        "variance_id": "2025-07_4010_Production",
+        "cause_category": "one_off",
+        "comment": "Repairs and maintenance showed an unfavourable variance of DKK 124.703,64. This was primarily driven by supplier ElektroTeknik Tarup ApS, which accounts for over half of the variance with a change of DKK 159.103,08. Previous months show fluctuating variances in both directions, suggesting this cost is one-off rather than persistent."
+      },
+      {
+        "variance_id": "2025-07_4050_Sales",
+        "cause_category": "one_off",
+        "comment": "Marketing costs showed an unfavourable variance of DKK 82.297,41 against budget. Kommunikationshuset Fyn ApS drove the variance with DKK 210.130,74 due to product brochures and online campaigns. The previous months swing both ways, so this variance looks unknown."
+      },
+      {
+        "variance_id": "2025-08_4010_Production",
+        "cause_category": "price",
+        "comment": "The unfavourable variance of DKK 110.241,60 is driven by Hydra-Service Danmark ApS, which accounts for 101,7 % of the variance due to higher costs for hydraulic hoses and seals. This variance appears persistent as previous months show unfavourable variances in a similar size."
+      },
+      {
+        "variance_id": "2025-08_4040_Administration",
+        "cause_category": "one_off",
+        "comment": "The administration IT costs showed an unfavourable variance of DKK 100.874,97 against budget. The variance is driven by Odense IT-Drift ApS with DKK 59.983,32, representing 59,5 % of the change. This increase looks persistent."
+      },
+      {
+        "variance_id": "2025-08_4050_Sales",
+        "cause_category": "one_off",
+        "comment": "The marketing account shows an unfavourable variance of DKK 67.287,22 driven by Messepartner Danmark ApS with DKK 150.199,31 for a trade fair stand. This looks like a one-off event."
+      },
+      {
+        "variance_id": "2025-09_4010_Production",
+        "cause_category": "one_off",
+        "comment": "The unfavourable variance of DKK 149.964,95 in repairs and maintenance is mainly driven by Hydra-Service Danmark ApS, which accounts for 131,8 % of the variance due to increased service visits. This looks one-off."
+      },
+      {
+        "variance_id": "2025-09_4040_Administration",
+        "cause_category": "one_off",
+        "comment": "The unfavourable variance of DKK 82.523,44 in IT costs was mainly driven by Nordlys Software A/S with a cost increase of DKK 135.940,60, explaining about 164,7 % of the variance. This looks one-off."
+      },
+      {
+        "variance_id": "2025-10_4050_Sales",
+        "cause_category": "timing",
+        "comment": "The marketing variance of DKK 91.312,70 is favourable, driven mainly by Kommunikationshuset Fyn ApS lacking costs this month against an average of DKK 107.860,69. This looks like timing."
+      },
+      {
+        "variance_id": "2025-11_4050_Sales",
+        "cause_category": "one_off",
+        "comment": "The marketing cost variance of DKK 88.739,90 is unfavourable and driven by Kommunikationshuset Fyn ApS with an increase of DKK 104.706,76 for an online campaign. As previous months swing between favourable and unfavourable variances, this looks one-off rather than persistent."
+      },
+      {
+        "variance_id": "2026-01_4010_Production",
+        "cause_category": "one_off",
+        "comment": "The unfavourable variance of DKK 107.482,28 on repairs and maintenance is mainly driven by Fynsk Maskinreparation ApS due to higher preventive maintenance costs on the CNC line. The previous months swing both ways, so this looks like a one-off event."
+      },
+      {
+        "variance_id": "2026-02_4040_Administration",
+        "cause_category": "one_off",
+        "comment": "The unfavourable variance of DKK 100.411,88 on IT costs was mainly driven by DataPunkt Hosting ApS, accounting for 77,2 % of the variance with DKK 109.352,39. This one-off cloud hosting and backup charge appears to be a timing issue or one-off event as costs swung both ways in previous months."
+      },
+      {
+        "variance_id": "2026-02_4050_Sales",
+        "cause_category": "timing",
+        "comment": "Marketing costs were DKK 50.908,33 favourable against the budget due to lower spending with Kommunikationshuset Fyn ApS, which had no costs this month compared to an average of DKK 91.766,37. This looks like timing and is unknown as previous months swing both ways."
+      },
+      {
+        "variance_id": "2026-02_4090_Administration",
+        "cause_category": "one_off",
+        "comment": "The unfavourable variance of DKK 61.693,90 in Other external costs was driven by Kontorhuset Fyn ApS, which accounts for 63,8 % of the variance. This increase appears to be one-off."
+      },
+      {
+        "variance_id": "2026-03_4010_Production",
+        "cause_category": "timing",
+        "comment": "The positive variance of DKK 115.593,84 in repairs and maintenance is favourable and mainly driven by Fynsk Maskinreparation ApS, which accounts for 132,4 % of the variance due to lower maintenance activity this month. This reduction looks like timing as previous months swing both ways."
+      },
+      {
+        "variance_id": "2026-03_4040_Administration",
+        "cause_category": "price",
+        "comment": "IT costs showed an unfavourable variance of DKK 111.046,83, mainly driven by Odense IT-Drift ApS with an increase of DKK 115.484,06. As similar high variances occurred in February, this looks persistent."
+      },
+      {
+        "variance_id": "2026-03_4050_Sales",
+        "cause_category": "one_off",
+        "comment": "The marketing cost variance of DKK 77.127,36 was unfavourable, mainly driven by Kommunikationshuset Fyn ApS with DKK 141.709,51 for product brochures. This looks one-off."
+      },
+      {
+        "variance_id": "2026-04_4040_Administration",
+        "cause_category": "timing",
+        "comment": "The favourable variance of DKK 84.308,20 in IT costs was mainly driven by Odense IT-Drift ApS, which accounts for 81,8 % of the change. This reduction looks like timing."
+      },
+      {
+        "variance_id": "2026-04_4050_Sales",
+        "cause_category": "one_off",
+        "comment": "The marketing account shows an unfavourable variance of DKK 106.937,31 against budget. This is driven by Messepartner Danmark ApS with costs of DKK 239.103,98 due to trade fair stand invoices. The variance swings across previous months, making it look one-off."
+      },
+      {
+        "variance_id": "2026-05_4010_Production",
+        "cause_category": "one_off",
+        "comment": "The unfavourable variance of DKK 89.607,03 on repairs and maintenance is driven by Hydra-Service Danmark ApS, whose costs increased by DKK 90.045,60 and explain about half of the variance. This looks like a one-off event as previous months do not show a persistent trend."
+      },
+      {
+        "variance_id": "2026-05_4040_Administration",
+        "cause_category": "timing",
+        "comment": "The favourable variance of DKK 87.804,02 on IT costs was mainly driven by Odense IT-Drift ApS, which had no costs recorded this month and accounts for 133,7 % of the variance. This looks like timing."
+      },
+      {
+        "variance_id": "2026-06_4010_Production",
+        "cause_category": "one_off",
+        "comment": "The unfavourable variance of DKK 107.482,28 on repairs and maintenance is mainly driven by ElektroTeknik Tarup ApS, which accounts for 99,8 % of the change. This looks like a one-off event as previous months show fluctuating variances without a persistent trend."
+      },
+      {
+        "variance_id": "2026-06_4040_Administration",
+        "cause_category": "timing",
+        "comment": "The favourable variance of DKK 68.624,94 on IT costs was mainly driven by Odense IT-Drift ApS, which had no costs this month compared to an average of DKK 84.087,14 in the previous 3 months. This looks like timing."
+      },
+      {
+        "variance_id": "2026-06_4050_Sales",
+        "cause_category": "one_off",
+        "comment": "The marketing account shows an unfavourable total variance of DKK 53.765,15, primarily driven by Messepartner Danmark ApS. This looks like one-off event costs and does not appear persistent as previous months swing both ways."
+      },
+      {
+        "variance_id": "2026-06_4090_Administration",
+        "cause_category": "one_off",
+        "comment": "The unfavourable variance of DKK 61.693,90 on other external costs in administration was mainly driven by Kontorhuset Fyn ApS, which accounts for 60,5 % of the change due to higher office supplies. This looks one-off rather than persistent given past month swings."
+      },
+      {
+        "variance_id": "2026-07_4050_Sales",
+        "cause_category": "timing",
+        "comment": "Marketing costs showed a favourable variance of DKK 91.312,70, mainly driven by Messepartner Danmark ApS being lower by DKK 155.296,59 due to timing of exhibition spend. As previous months swing both ways, this looks like timing."
+      },
+      {
+        "variance_id": "2026-07_4090_Administration",
+        "cause_category": "one_off",
+        "comment": "The unfavourable variance of DKK 52.674,01 was mainly driven by CleanTeam Fyn ApS with DKK 59.559,51, which accounts for more than half of the variance. This looks one-off."
+      }
+    ],
+    "figure_check_passed": 71,
+    "figure_check_failed": [],
+    "sign_errors": 0,
+    "sign_errors_for_review": [],
+    "within_60_words": 71
+  }
 }

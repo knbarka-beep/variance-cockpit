@@ -349,7 +349,7 @@ def main():
                            "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                            "output": draft.model_dump()}
             save(drafts, inputs)  # after every draft, so progress is never lost
-            print(f"[{len(drafts)}/{len(inputs)}] {vid:<34} {available[0]:<22} "
+            print(f"[{i}/{n_calls}] {vid:<34} {available[0]:<22} "
                   f"{time.monotonic() - started:5.1f}s", flush=True)
             if i < n_calls:
                 time.sleep(ai["seconds_between_calls"])
