@@ -10,7 +10,7 @@
   --fav: #047857;
   --unfav: #b91c1c;
   --total: #334155;
-  --budget: #94a3b8;
+  --budget: #64748b;
   --notice-bg: #fef3c7;
   --notice-text: #78350f;
   --radius: 6px;
@@ -20,13 +20,13 @@
   :root:not([data-theme="light"]) {
     --bg: #0b1120; --surface: #111827; --text: #e2e8f0; --muted: #94a3b8; --border: #1f2937;
     --accent: #60a5fa; --accent-soft: #172554; --fav: #34d399; --unfav: #f87171; --total: #cbd5e1;
-    --budget: #64748b; --notice-bg: #422006; --notice-text: #fde68a; color-scheme: dark;
+    --budget: #94a3b8; --notice-bg: #422006; --notice-text: #fde68a; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0b1120; --surface: #111827; --text: #e2e8f0; --muted: #94a3b8; --border: #1f2937;
   --accent: #60a5fa; --accent-soft: #172554; --fav: #34d399; --unfav: #f87171; --total: #cbd5e1;
-  --budget: #64748b; --notice-bg: #422006; --notice-text: #fde68a; color-scheme: dark;
+  --budget: #94a3b8; --notice-bg: #422006; --notice-text: #fde68a; color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -51,6 +51,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .fav { color: var(--fav); }
 .unfav { color: var(--unfav); }
 .num { text-align: right; white-space: nowrap; }
+.nowrap { white-space: nowrap; }
 
 .page { max-width: 1280px; margin: 0 auto; padding: 16px; display: grid; gap: 16px; }
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; min-width: 0; }
@@ -120,3 +121,10 @@ footer a, .card a { color: var(--accent); }
 .tooltip td.num { padding-left: 16px; }
 .tooltip tr.strong td { font-weight: 600; border-top: 1px solid var(--border); padding-top: 4px; }
 .summary { font-size: 1rem; }
+
+/* Transactions on phones: description under the counterparty, so the amount column fits */
+.desc-inline { display: none; }
+@media (max-width: 599px) {
+  .desc-col { display: none; }
+  .desc-inline { display: block; color: var(--muted); font-size: 0.8rem; }
+}

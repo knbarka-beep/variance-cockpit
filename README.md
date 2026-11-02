@@ -11,7 +11,7 @@ Built with [Claude Code](https://claude.com/claude-code).
 - Session 1: synthetic data generator and data specification. See [docs/data-spec.md](docs/data-spec.md).
 - Session 2: calculation layer in DuckDB SQL views, reconciliation checks and JSON export for the dashboard. See [docs/sql-guide.md](docs/sql-guide.md).
 - Session 3: AI draft comments with Gemini, a deterministic figure check and an evaluation against the planted events. See [docs/ai-layer.md](docs/ai-layer.md).
-- Session 5 (in progress): static Next.js dashboard in `web/`, not deployed yet. Run it with `cd web`, `npm install`, `npm run dev`.
+- Session 5: static Next.js dashboard in `web/`, not deployed yet. See [Dashboard](#dashboard-local-build) below.
 
 ## Getting started (Windows)
 
@@ -39,6 +39,19 @@ Controller review in Excel (see [docs/ai-layer.md](docs/ai-layer.md#the-controll
 rem fill in status, final_comment and reviewer_note in data\check\review.xlsx, then:
 .venv\Scripts\python scripts\review_import.py
 .venv\Scripts\python scripts\build_db.py
+```
+
+## Dashboard (local build)
+
+The dashboard in `web/` is a static Next.js site (Recharts, no server, no live AI). It reads only `data/export/` (written by `build_db.py`) and the aggregate scores in `data/ai/evaluation.json`; `web/scripts/prepare-data.mjs` copies the fields it needs into `web/lib/dashboard.json` before every build.
+
+```
+.venv\Scripts\python scripts\build_db.py
+cd web
+npm install
+npm run dev     # http://localhost:3000, rereads data/export on start
+npm run build   # static site in web\out
+npm test        # number format and grouping rules
 ```
 
 ## Limitations

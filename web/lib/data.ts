@@ -16,7 +16,7 @@ export type AccountMonth = {
   actual_dkk: number; budget_dkk: number; variance_profit_dkk: number;
 };
 export type Flexed = {
-  period: string; account_no: number; account_name: string; volume_pct_of_budget: number;
+  period: string; account_no: number; account_name: string; actual_dkk: number; flexed_budget_dkk: number; volume_pct_of_budget: number;
   total_variance_profit_dkk: number; price_usage_variance_profit_dkk: number; volume_variance_profit_dkk: number;
 };
 export type Transaction = { cell_id: string; posting_date: string; counterparty: string | null; description: string; amount_dkk: number };

@@ -4,12 +4,12 @@ import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "rec
 import { data } from "@/lib/data";
 import { amount, label, last12, millions, monthLabel, pct } from "@/lib/format";
 import ChartTooltip from "./ChartTooltip";
+import { STATUS, splitFor } from "./VarianceList";
 
-type Point = { period: string; actual?: number; budget?: number };
+type Point = { period: string; actual?: number; budget?: number; base: string };
 const trendTip = (p: Point) => ({ title: p.period, rows: [
   { label: "Actual", value: p.actual == null ? "–" : millions(p.actual) },
-  { label: "Budget", value: p.budget == null ? "–" : millions(p.budget) }] });
-import { STATUS, splitFor } from "./VarianceList";
+  { label: p.base, value: p.budget == null ? "–" : millions(p.budget) }] });
 
 /** Details for one variance in a native <dialog>: focus trap and Esc to close come with it. */
 export default function Drilldown({ id, onClose }: { id: string | null; onClose: () => void }) {
@@ -22,14 +22,18 @@ export default function Drilldown({ id, onClose }: { id: string | null; onClose:
     if (!v && d?.open) d.close();
   }, [v]);
 
-  const trend = v ? last12(data.meta.periods, v.period).map((p) => {
-    const r = data.accountMonth.find((a) => a.period === p && a.account_no === v.account_no && a.cost_centre === v.cost_centre);
-    return { period: monthLabel(p), actual: r?.actual_dkk, budget: r?.budget_dkk };
+  const base = v?.variance_type === "price" ? "Flexed budget" : "Budget";
+  // A price row is measured against the flexed budget, so its chart uses the same basis.
+  const trend: Point[] = v ? last12(data.meta.periods, v.period).map((p) => {
+    const r = v.variance_type === "price"
+      ? data.flexed.find((f) => f.period === p && f.account_no === v.account_no)
+      : data.accountMonth.find((a) => a.period === p && a.account_no === v.account_no && a.cost_centre === v.cost_centre);
+    const budget = r && ("flexed_budget_dkk" in r ? r.flexed_budget_dkk : r.budget_dkk);
+    return { period: monthLabel(p), actual: r?.actual_dkk, budget, base };
   }) : [];
   const lines = v ? data.transactions.filter((t) => t.cell_id === v.cell_id)
     .sort((a, b) => Math.abs(b.amount_dkk) - Math.abs(a.amount_dkk)) : [];
   const split = v && splitFor(v);
-  const base = v?.variance_type === "price" ? "Flexed budget" : "Budget";
 
   return (
     <dialog ref={ref} className="drill" onClose={onClose} aria-labelledby="drill-title"
@@ -54,8 +58,8 @@ export default function Drilldown({ id, onClose }: { id: string | null; onClose:
             {split && <p>{split} The bridge shows all cost of materials together, including packaging.</p>}
 
             <div>
-              <h3>Last 12 months, actual vs budget</h3>
-              <div style={{ height: 160 }} role="img" aria-label="Actual (solid) and budget (dashed) for this account, last 12 months">
+              <h3>Last 12 months, actual vs {base.toLowerCase()}</h3>
+              <div style={{ height: 160 }} role="img" aria-label={`Actual (solid) and ${base.toLowerCase()} (dashed) for this account, last 12 months`}>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={trend} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
                     <XAxis dataKey="period" tickFormatter={(p: string) => p.slice(0, 3)} tick={{ fill: "var(--muted)", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "var(--border)" }} />
@@ -92,10 +96,13 @@ export default function Drilldown({ id, onClose }: { id: string | null; onClose:
               <h3>Transactions ({lines.length})</h3>
               <div className="tablewrap">
                 <table>
-                  <thead><tr><th>Date</th><th>Counterparty</th><th>Description</th><th className="num">DKK</th></tr></thead>
+                  <thead><tr><th>Date</th><th>Counterparty</th><th className="desc-col">Description</th><th className="num">DKK</th></tr></thead>
                   <tbody>
                     {lines.map((t, i) => (
-                      <tr key={i}><td>{t.posting_date}</td><td>{t.counterparty ?? "–"}</td><td>{t.description}</td><td className="num">{amount(t.amount_dkk)}</td></tr>
+                      <tr key={i}>
+                        <td className="nowrap">{t.posting_date.slice(8, 10)}.{t.posting_date.slice(5, 7)}</td>
+                        <td>{t.counterparty ?? "–"}<span className="desc-inline">{t.description}</span></td>
+                        <td className="desc-col">{t.description}</td><td className="num">{amount(t.amount_dkk)}</td></tr>
                     ))}
                   </tbody>
                 </table>

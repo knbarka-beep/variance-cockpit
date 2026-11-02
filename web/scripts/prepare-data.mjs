@@ -23,7 +23,7 @@ const data = {
     "period", "account_no", "account_name", "pl_group", "cost_centre", "actual_dkk", "budget_dkk", "variance_profit_dkk"])),
   monthSummaries: Object.fromEntries(load("export/month_summaries.json").map((r) => [r.period, r.summary])),
   flexed: load("export/flexed_materials.json").map((r) => pick(r, [
-    "period", "account_no", "account_name", "volume_pct_of_budget", "total_variance_profit_dkk",
+    "period", "account_no", "account_name", "actual_dkk", "flexed_budget_dkk", "volume_pct_of_budget", "total_variance_profit_dkk",
     "price_usage_variance_profit_dkk", "volume_variance_profit_dkk"])),
   transactions: load("export/transactions.json").map((r) => pick(r, [
     "cell_id", "posting_date", "counterparty", "description", "amount_dkk"])),
