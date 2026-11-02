@@ -37,5 +37,5 @@
     "min_amount_dkk": 50000.0
   },
   "sign_convention": "Amounts ending in _dkk are profit view (revenue and costs positive; variance positive = favourable). Columns ending in _ledger_dkk are as booked (debit +, credit -). Percentages are in per cent.",
-  "built_at": "2026-11-02T11:46:39+00:00"
+  "built_at": "2026-11-02T21:33:21+00:00"
 }

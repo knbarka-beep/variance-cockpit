@@ -11,6 +11,7 @@ Built with [Claude Code](https://claude.com/claude-code).
 - Session 1: synthetic data generator and data specification. See [docs/data-spec.md](docs/data-spec.md).
 - Session 2: calculation layer in DuckDB SQL views, reconciliation checks and JSON export for the dashboard. See [docs/sql-guide.md](docs/sql-guide.md).
 - Session 3: AI draft comments with Gemini, a deterministic figure check and an evaluation against the planted events. See [docs/ai-layer.md](docs/ai-layer.md).
+- Session 5 (in progress): static Next.js dashboard in `web/`, not deployed yet. Run it with `cd web`, `npm install`, `npm run dev`.
 
 ## Getting started (Windows)
 

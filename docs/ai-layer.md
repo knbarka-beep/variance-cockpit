@@ -124,7 +124,7 @@ The evaluation compares versions side by side and writes both to `data/ai/evalua
 | | v1 (baseline) | v2 |
 |---|---|---|
 | Prompt | `prompts/v1/variance_comment.md` | `prompts/variance_comment.md` |
-| Drafts | `data/ai/v1/drafts.json` (kept as the baseline) | `data/ai/drafts.json`, each with `prompt_version: v2` |
+| Drafts | `data/ai/v1/drafts.json` (kept as the baseline) | `data/ai/v2/drafts.json` (kept as the baseline), each with `prompt_version: v2` |
 | Model | Fallback across 3.8 Flash, 3.6 Flash and 3.5 Flash-Lite as quotas ran out | `gemini-3.5-flash-lite` only, so all drafts are comparable |
 | Input | Ledger lines, previous 3 months, following month, price/volume split | Same, plus the customer table for revenue and the supplier table for costs |
 
@@ -162,7 +162,7 @@ v3 is run twice with exactly the same input and prompt, to see what the model al
 .venv\Scripts\python scripts\evaluate_ai.py
 ```
 
-`--model` uses that one model, with no fallback. `--version` stores it as `prompt_version` and saves the drafts in `data/ai/<version>/`. Such a run never touches `data/ai/reviews.csv`, and the dashboard keeps reading `data/ai/drafts.json`. The v2 drafts and evaluation are kept as a baseline in `data/ai/v2/`, its prompt in `prompts/v2/`.
+`--model` uses that one model, with no fallback. `--version` stores it as `prompt_version` and saves the drafts in `data/ai/<version>/`. Such a run never touches `data/ai/reviews.csv`. The dashboard reads `data/ai/drafts.json`; to show a version there, copy its drafts into that file and run `build_db.py`. It currently holds **v3a**, and can be switched to v3b once that run is complete. The v2 drafts and evaluation are kept as a baseline in `data/ai/v2/`, its prompt in `prompts/v2/`.
 
 v3a against v2 shows the effect of removing look-ahead (same model). v3b against v3a shows the effect of the model (same input).
 
