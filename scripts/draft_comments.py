@@ -7,6 +7,8 @@ Usage (from the project folder):
   .venv/Scripts/python scripts/draft_comments.py --dry-run       # build inputs, count calls; no key, no API
   .venv/Scripts/python scripts/draft_comments.py --show ID       # print the input for one variance_id
   .venv/Scripts/python scripts/draft_comments.py                 # call the API for new or changed inputs only
+  .venv/Scripts/python scripts/draft_comments.py --model gemini-3.6-flash --version v3b [--dry-run]
+      # one model only (no fallback), drafts saved to data/ai/v3b/drafts.json; reviews.csv untouched
 
 Needs data/variance.duckdb (run build_db.py first). Run build_db.py again afterwards to export the drafts.
 Never reads data/truth/: an audit hook makes any attempt fail.
@@ -48,6 +50,7 @@ PROMPT = (ROOT / "prompts" / "variance_comment.md").read_text(encoding="utf-8") 
 AI_DIR = ROOT / "data" / "ai"
 DRAFTS = AI_DIR / "drafts.json"
 REVIEWS = AI_DIR / "reviews.csv"
+WRITE_REVIEWS = True  # False for --version runs
 
 
 class Draft(BaseModel):
@@ -108,7 +111,7 @@ def build_input(con, v):
         inp["price_row_note"] = (
             "This variance is measured against the flexed budget (the budget scaled to the actual "
             "sales volume), so the volume effect is already removed. What remains is a price or usage "
-            "effect in this month. previous_months and following_month are on the same flexed basis.")
+            "effect in this month. previous_months are on the same flexed basis.")
     inp |= {"variance_dkk": v["variance_profit_dkk"], "variance_pct": v["variance_pct"],
             "favourable": v["favourable"]}
 
@@ -167,10 +170,8 @@ def build_input(con, v):
         inp["ledger_lines_not_shown"] = {"count": len(lines) - n,
                                          "total_dkk": round(sum(x["amount_dkk"] for x in lines[n:]), 2)}
 
+    # Only this month and earlier: at month-end close the following month does not exist yet (v3).
     inp["previous_months"] = month_rows(con, v, [-3, -2, -1])
-    following = month_rows(con, v, [1])
-    if following:  # shows a later reversal or a continuing trend
-        inp["following_month"] = following[0]
     return inp
 
 
@@ -231,6 +232,16 @@ def figure_check(comment, inp):
     return {"figures_found": len(figures), "figures_matched": len(figures) - len(unmatched),
             "unmatched": unmatched, "check_passed": not unmatched,
             "word_count": len(comment.split())}
+
+
+def consistency_flags(output):
+    """Fields in one draft that contradict each other. No answer key; flags only, nothing is changed."""
+    flags = []
+    if output["cause_category"] == "unclear" and output["persistence"] == "persistent":
+        flags.append("unclear but persistent")
+    if output["no_clear_cause"] != (output["cause_category"] == "unclear"):
+        flags.append(f"no_clear_cause {str(output['no_clear_cause']).lower()} but cause {output['cause_category']}")
+    return flags
 
 
 # ---------------------------------------------------------------- Gemini
@@ -304,7 +315,14 @@ def main():
     ap.add_argument("--list-models", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--show", metavar="VARIANCE_ID")
+    ap.add_argument("--model", help="use only this model (no fallback list)")
+    ap.add_argument("--version", help="prompt_version to store; drafts go to data/ai/VERSION/drafts.json")
     args = ap.parse_args()
+    global DRAFTS, WRITE_REVIEWS
+    if args.version:  # an experiment run: own folder, and the controller's reviews.csv is left alone
+        DRAFTS, WRITE_REVIEWS = AI_DIR / args.version / "drafts.json", False
+    version = args.version or ai["prompt_version"]
+    models = [args.model] if args.model else list(ai["models"])
     if args.list_models:
         return list_models()
 
@@ -320,7 +338,8 @@ def main():
     todo = [vid for vid in inputs if old.get(vid, {}).get("input_hash") != hashes[vid]]
     n_calls = min(len(todo), ai["max_calls_per_run"])
     print(f"{len(inputs)} material variances, {len(inputs) - len(todo)} cached, {len(todo)} new or changed.")
-    print(f"This run: up to {n_calls} API calls, models in order: {', '.join(ai['models'])} "
+    print(f"This run: up to {n_calls} API calls, prompt_version {version}, saved to {DRAFTS.relative_to(ROOT)}, "
+          f"models in order: {', '.join(models)} "
           f"(about {n_calls * ai['seconds_between_calls'] // 60 + 1} min).")
     if args.dry_run:
         return print("Dry run: no API calls made, nothing written.")
@@ -328,7 +347,7 @@ def main():
     import httpx
     from google.genai import errors
     gemini = client() if n_calls else None
-    available = list(ai["models"])  # models still usable in this run
+    available = models  # models still usable in this run
     drafts = {vid: old[vid] for vid in inputs if vid in old}
     save(drafts, inputs)
     try:
@@ -345,7 +364,7 @@ def main():
                 print("Every model in the list is unavailable. Stopping.")
                 break
             drafts[vid] = {"variance_id": vid, "input_hash": hashes[vid], "model": available[0],
-                           "prompt_version": ai["prompt_version"],
+                           "prompt_version": version,
                            "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                            "output": draft.model_dump()}
             save(drafts, inputs)  # after every draft, so progress is never lost
@@ -366,12 +385,14 @@ def save(drafts, inputs):
     Written to a temporary file first, so an interrupted save never leaves a broken file."""
     for vid, d in drafts.items():  # the figure check is cheap, so always redo it
         d["figure_check"] = figure_check(d["output"]["comment"], inputs[vid])
-    AI_DIR.mkdir(parents=True, exist_ok=True)
+        d["figure_check"]["consistency_flags"] = consistency_flags(d["output"])  # reported, not part of check_passed
+    DRAFTS.parent.mkdir(parents=True, exist_ok=True)
     ordered = [drafts[vid] for vid in inputs if vid in drafts]
     tmp = DRAFTS.with_suffix(".tmp")
     tmp.write_text(json.dumps(ordered, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     os.replace(tmp, DRAFTS)
-    write_reviews(list(inputs))
+    if WRITE_REVIEWS:
+        write_reviews(list(inputs))
 
 
 def write_reviews(variance_ids):

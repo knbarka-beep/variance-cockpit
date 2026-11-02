@@ -438,6 +438,33 @@
         "comment": "The ledger lines do not show a clear cause for the total variance of DKK -99.649,42 on account 4090 Other external costs. Please review the underlying transactions, cost owner, and relevant approvals."
       }
     ],
+    "consistency_flagged": 4,
+    "consistency_flags_for_review": [
+      {
+        "variance_id": "2025-05_4010_Production",
+        "flags": [
+          "unclear but persistent"
+        ]
+      },
+      {
+        "variance_id": "2025-06_4010_Production",
+        "flags": [
+          "unclear but persistent"
+        ]
+      },
+      {
+        "variance_id": "2025-08_4010_Production",
+        "flags": [
+          "unclear but persistent"
+        ]
+      },
+      {
+        "variance_id": "2026-06_4040_Administration",
+        "flags": [
+          "no_clear_cause true but cause timing"
+        ]
+      }
+    ],
     "within_60_words": 71
   },
   "v2": {
@@ -821,6 +848,17 @@
     "figure_check_failed": [],
     "sign_errors": 0,
     "sign_errors_for_review": [],
+    "consistency_flagged": 1,
+    "consistency_flags_for_review": [
+      {
+        "variance_id": "2026-09_1010_Sales",
+        "flags": [
+          "unclear but persistent"
+        ]
+      }
+    ],
     "within_60_words": 71
-  }
+  },
+  "v3a": null,
+  "v3b": null
 }

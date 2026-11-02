@@ -1,10 +1,11 @@
-"""Evaluate the AI draft comments against the answer key, v1 and v2 side by side.
+"""Evaluate the AI draft comments against the answer key, v1, v2, v3a and v3b side by side.
 
 This is the ONLY script that may read data/truth/. It is a first automatic pass;
 the controller judges the comments themselves.
 
   v1 = data/ai/v1/drafts.json (baseline: first prompt, mixed models)
-  v2 = drafts in data/ai/drafts.json with prompt_version "v2"
+  v2 = data/ai/v2/drafts.json (customer/supplier baseline, gemini-3.5-flash-lite)
+  v3a, v3b = data/ai/v3a/, data/ai/v3b/ (v2 without the following month; 3.5-flash-lite vs 3.6-flash)
 
 Measures per version:
   1. Planted events: does the draft name the expected cause category?
@@ -18,6 +19,8 @@ Measures per version:
   3. Figure check pass rate (every number in the comment found in the input).
   4. Sign errors: an amount written with a minus sign, or 'favourable' / 'unfavourable'
      used the wrong way round.
+  5. Consistency flags (no answer key, reported only): 'unclear' but 'persistent', or
+     no_clear_cause not matching cause_category 'unclear'.
 
 Run:  .venv/Scripts/python scripts/evaluate_ai.py     Writes data/ai/evaluation.json.
 """
@@ -51,6 +54,8 @@ for cell, counterparty, description in con.execute("""
     invoices.update(re.findall(r"Invoice (\d+)", description or ""))
 all_counterparties = [r[0] for r in con.execute("SELECT counterparty FROM counterparties").fetchall()]
 con.close()
+# Imported only after the answer key is read: draft_comments installs a hook that blocks data/truth/.
+from draft_comments import consistency_flags  # noqa: E402
 LEGAL_FORM = re.compile(r"\s+(A/S|ApS|GmbH|AB|AS|B\.V\.|Oy|UAB|& Co)$")
 
 
@@ -123,6 +128,8 @@ def evaluate(drafts):
     signs = [{"variance_id": vid, "error": err, "comment": d["output"]["comment"]}
              for vid, d in sorted(drafts.items())
              if vid in material and (err := sign_error(d["output"]["comment"], material[vid][1]))]
+    inconsistent = [{"variance_id": vid, "flags": flags} for vid, d in sorted(drafts.items())
+                    if (flags := consistency_flags(d["output"]))]
     fig_failed = [{"variance_id": vid, "unmatched": d["figure_check"]["unmatched"]}
                   for vid, d in sorted(drafts.items()) if not d["figure_check"]["check_passed"]]
     return {
@@ -141,11 +148,13 @@ def evaluate(drafts):
         "figure_check_failed": fig_failed,
         "sign_errors": len(signs),
         "sign_errors_for_review": signs,
+        "consistency_flagged": len(inconsistent),
+        "consistency_flags_for_review": inconsistent,
         "within_60_words": sum(d["figure_check"]["word_count"] <= 60 for d in drafts.values()),
     }
 
 
-versions = {"v1": load(AI / "v1" / "drafts.json"), "v2": load(AI / "drafts.json", "v2")}
+versions = {v: load(AI / v / "drafts.json") for v in ("v1", "v2", "v3a", "v3b")}
 result = {name: evaluate(d) if d else None for name, d in versions.items()}
 (AI / "evaluation.json").write_text(json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
@@ -166,10 +175,13 @@ rows = [
     ("Figure check passed", lambda r: f"{r['figure_check_passed']}/{r['drafts']}"),
     ("Sign errors", lambda r: f"{r['sign_errors']}/{r['drafts']}"),
     ("Within 60 words", lambda r: f"{r['within_60_words']}/{r['drafts']}"),
+    ("Consistency flags (no key)", lambda r: f"{r['consistency_flagged']}/{r['drafts']}"),
 ]
-print(f"\n{'':32}{'v1':<46}{'v2':<46}")
-for label, f in rows:
-    print(f"{label:<32}{cell(result["v1"], f):<46}{cell(result["v2"], f):<46}")
+table = [["", *result]] + [[label] + [cell(r, f) for r in result.values()] for label, f in rows]
+widths = [max(len(x) for x in col) + 2 for col in zip(*table)]
+print()
+for line in table:
+    print("".join(x.ljust(w) for x, w in zip(line, widths)))
 for name, r in result.items():
     if r and r["noise_false_claims"]:
         print(f"\n{name} false claims on noise variances:")
@@ -180,4 +192,9 @@ for name, r in result.items():
         print(f"\n{name} sign errors:")
         for s in r["sign_errors_for_review"]:
             print(f"  {s['variance_id']:<34}{s['error']}")
+for name, r in result.items():
+    if r and r["consistency_flagged"]:
+        print(f"\n{name} consistency flags:")
+        for c in r["consistency_flags_for_review"]:
+            print(f"  {c['variance_id']:<34}{'; '.join(c['flags'])}")
 print("\nDetails (noise claims, figure check failures, sign errors) in data/ai/evaluation.json")

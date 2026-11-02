@@ -62,3 +62,13 @@ import httpx
 waits.clear()
 assert draft_comments.call_gemini(FakeClient([httpx.ReadTimeout("slow"), good]), "m1", {}) is good and waits == [10], waits
 print("timeout retry: test passed")
+
+# ---- consistency flags (no answer key)
+from draft_comments import consistency_flags
+ok_out = {"cause_category": "unclear", "persistence": "unknown", "no_clear_cause": True}
+assert consistency_flags(ok_out) == []
+assert consistency_flags(ok_out | {"persistence": "persistent"}) == ["unclear but persistent"]
+assert consistency_flags(ok_out | {"no_clear_cause": False}) == ["no_clear_cause false but cause unclear"]
+assert consistency_flags({"cause_category": "price", "persistence": "one_off", "no_clear_cause": True}) == \
+    ["no_clear_cause true but cause price"]
+print("consistency flags: all tests passed")

@@ -35,7 +35,7 @@ One JSON document per material variance, built only from the DuckDB views:
 - **For cost variances except raw materials and packaging (from v2):** cost per supplier this month vs that supplier's average for the previous 3 months on the same account and cost centre, with the number of lines. It comes from the SQL view `v_counterparty_month`. Lines without a counterparty (payroll, card payments, expense claims) are grouped as "(no counterparty)". The largest ledger line is also marked, for information only.
 - **For each customer or supplier (from v2):** its change as a share of the variance (`change_share_of_variance_pct`). Positive means it moves in the same direction as the variance.
 - **The same account and cost centre for the previous 3 months:** so the model can tell a one-off from a persistent change.
-- **The following month, if available:** so a reversal or correction is visible. This is given for every variance, not only for energy: the script must not know which variances are planted events.
+- **No following month (from v3).** v1 and v2 also gave the following month, so a reversal or correction was visible. That was look-ahead: at month-end close the following month does not exist yet. From v3 the model sees only this month and earlier months, and the prompt no longer mentions the following month.
 
 Run `draft_comments.py --show 2026-07_4020_Production` to see the exact input for one variance.
 
@@ -145,6 +145,29 @@ v2 prompt changes:
 
 v2 was written after the v1 errors were known, so its score is measured on the same events the prompt was tuned against (see the README). The strict noise measure rose because v2 names the real invoice behind a noise variance more often, as one-off or timing; under the false-claim measure that is a correct reading.
 
+## v3: no look-ahead, two models
+
+v1 and v2 gave the model the following month. At month-end close that month does not exist yet, so the AI was helped by information a controller would not have: a reversal the month after (event 3) or a continuing trend points to the cause. **The v2 numbers above are therefore too high.** v3 removes the following month from the input, and removes the one line in the prompt that mentioned it (and the same words in the note on price rows). Nothing else in the prompt or the input changed.
+
+v3 is run twice with exactly the same input and prompt, to see what the model alone changes:
+
+| | Model | Drafts |
+|---|---|---|
+| v3a | `gemini-3.5-flash-lite` (same model as v2) | `data/ai/v3a/drafts.json` |
+| v3b | `gemini-3.6-flash` | `data/ai/v3b/drafts.json` |
+
+```
+.venv\Scripts\python scripts\draft_comments.py --model gemini-3.5-flash-lite --version v3a
+.venv\Scripts\python scripts\draft_comments.py --model gemini-3.6-flash --version v3b
+.venv\Scripts\python scripts\evaluate_ai.py
+```
+
+`--model` uses that one model, with no fallback. `--version` stores it as `prompt_version` and saves the drafts in `data/ai/<version>/`. Such a run never touches `data/ai/reviews.csv`, and the dashboard keeps reading `data/ai/drafts.json`. The v2 drafts and evaluation are kept as a baseline in `data/ai/v2/`, its prompt in `prompts/v2/`.
+
+v3a against v2 shows the effect of removing look-ahead (same model). v3b against v3a shows the effect of the model (same input).
+
+**Consistency flags (no answer key).** The figure check now also flags drafts whose fields contradict each other: `cause_category` "unclear" with persistence "persistent", or `no_clear_cause` not matching `cause_category` "unclear". The flags are listed in `figure_check.consistency_flags`. They do not change the draft and do not count towards `check_passed`. `evaluate_ai.py` shows them as a separate row for all four versions; the evaluation rules are unchanged.
+
 ## Known limits
 
 - **Noise is a real invoice in the ledger.** In this data, a noise variance on a lumpy account (repairs, marketing, IT) comes from an invoice that really is unusually large or small that month. No baseline can tell it apart from a genuine one-off, so a draft that names that invoice is reading the ledger correctly. Claiming "price" or "persistent" for it would be a real error.
@@ -152,5 +175,5 @@ v2 was written after the v1 errors were known, so its score is measured on the s
 - **Small sample:** six planted events and about 70 variances.
 - **Fixed categories:** the cause categories are a simplification. A real variance can have several causes.
 - **The figure check checks numbers, not meaning.** It catches an invented amount, but not a correct amount attached to the wrong explanation.
-- **Hindsight:** the following month is given as context. In a real month-end close it would not exist yet.
+- **Hindsight in v1 and v2:** both versions saw the following month, which a real month-end close does not have. Their scores are therefore too high, most clearly for event 3 (energy booked in full, corrected the month after), where the correction itself was in the input. v3 removes it.
 - **Model changes:** a different model can give different drafts, and with the fallback list one run can mix models. The model name is stored with each draft, so differences can be traced. Changing the model list does not redraft existing drafts; delete `data/ai/drafts.json` to start again.

@@ -28,7 +28,7 @@ You receive one material variance as JSON. Write the comment a careful controlle
 - cost_by_supplier (costs only): each supplier's cost on this account and cost centre this month, its average for the previous 3 months, the change, and the number of lines this month and on average. Lines without a counterparty are grouped as "(no counterparty)".
 - change_share_of_variance_pct: the customer's or supplier's change as a percentage of the variance. Positive = it moves in the same direction as the variance; negative = it works against it.
 - ledger_lines are the postings behind the variance, largest first. A negative amount reduces the cost or revenue, for example a reversal or credit note.
-- previous_months and following_month show the same account and cost centre in other months, on the same basis as the variance: against the budget for "total" rows, against the flexed budget for "price" rows.
+- previous_months shows the same account and cost centre in other months, on the same basis as the variance: against the budget for "total" rows, against the flexed budget for "price" rows.
 - price_row_note (price rows only) repeats what a price row means.
 
 ## Output fields

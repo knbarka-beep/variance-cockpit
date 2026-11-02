@@ -195,7 +195,7 @@ events:
 ai:
   # Prompt version stored on each draft. The current prompt is prompts/variance_comment.md;
   # older versions are kept in prompts/v1/ etc.
-  prompt_version: v2
+  prompt_version: v3 # v3: no following month in the input (look-ahead removed)
   # Models to try, in order (see: python scripts/draft_comments.py --list-models).
   # When a model's free-tier quota is used up, it is not found, or it keeps failing after
   # retries, the run moves to the next; when none is left, the run stops and saves.

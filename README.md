@@ -43,4 +43,5 @@ rem fill in status, final_comment and reviewer_note in data\check\review.xlsx, t
 ## Limitations
 
 - **The v2 prompt was tuned on the test it is scored on.** v2 was made after the v1 errors were known, so its 13/15 on the planted events is measured on the same events the prompt was adjusted against. It is not an independent test.
+- **The v1 and v2 scores are too high: the AI could see the following month.** v1 and v2 gave the model the following month as context. At month-end close that month does not exist yet, so this was look-ahead: a reversal next month (event 3, the energy misposting) or a continuing trend made the cause easier to see than it is in practice. v3a and v3b remove the following month and are the fair comparison.
 - **Event 4 (a customer buying less) is missed in July and September.** The customer baseline is the customer's average for the previous 3 months. It is not seasonally adjusted, so in July every customer looks low. By September it includes the customer's own low July and August, so the drop no longer stands out. Fix in the next version: a baseline against the budget, or against the same month last year.
