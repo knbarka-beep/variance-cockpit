@@ -30,3 +30,17 @@ AI draft comments (needs `GEMINI_API_KEY` in `.env`; see [docs/ai-layer.md](docs
 .venv\Scripts\python scripts\build_db.py
 .venv\Scripts\python scripts\evaluate_ai.py
 ```
+
+Controller review in Excel (see [docs/ai-layer.md](docs/ai-layer.md#the-controllers-review)):
+
+```
+.venv\Scripts\python scripts\review_export.py
+rem fill in status, final_comment and reviewer_note in data\check\review.xlsx, then:
+.venv\Scripts\python scripts\review_import.py
+.venv\Scripts\python scripts\build_db.py
+```
+
+## Limitations
+
+- **The v2 prompt was tuned on the test it is scored on.** v2 was made after the v1 errors were known, so its 13/15 on the planted events is measured on the same events the prompt was adjusted against. It is not an independent test.
+- **Event 4 (a customer buying less) is missed in July and September.** The customer baseline is the customer's average for the previous 3 months. It is not seasonally adjusted, so in July every customer looks low. By September it includes the customer's own low July and August, so the drop no longer stands out. Fix in the next version: a baseline against the budget, or against the same month last year.
