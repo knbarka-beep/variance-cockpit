@@ -53,6 +53,11 @@ if not Path("data/ai/drafts.json").exists():
     Path("data/ai/drafts.json").write_text("[]\n", encoding="utf-8")
 if not Path("data/ai/reviews.csv").exists():
     Path("data/ai/reviews.csv").write_text("variance_id,status,final_comment,reviewer_note\n", encoding="utf-8")
+# Same status rules as review_import.py: stop before building on a bad review file.
+sys.path.insert(0, str(Path(__file__).parent))
+from review_import import check_reviews, read_csv  # noqa: E402
+if problems := check_reviews(read_csv()):
+    sys.exit("data/ai/reviews.csv has review errors - nothing built:\n  " + "\n  ".join(problems))
 
 # 3. All calculations: the SQL files, in order.
 for sql_file in sorted(Path("sql").glob("*.sql")):

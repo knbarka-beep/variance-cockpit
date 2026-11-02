@@ -8,7 +8,8 @@ For every material variance, Google's Gemini model drafts a short comment of the
 
 ```
 build_db.py ──► data/variance.duckdb ──► draft_comments.py ──► data/ai/drafts.json
-                                                           └─► data/ai/reviews.csv (controller fills in)
+                                                           └─► data/ai/reviews.csv (one empty row per variance)
+review_export.py ──► data/check/review.xlsx (controller fills in) ──► review_import.py ──► data/ai/reviews.csv
 build_db.py (again) ──► data/export/comments.json (draft and final comment side by side)
 evaluate_ai.py (reads the answer key) ──► data/ai/evaluation.json
 ```
@@ -17,6 +18,8 @@ evaluate_ai.py (reads the answer key) ──► data/ai/evaluation.json
 |---|---|
 | `scripts/draft_comments.py` | Builds the input for each material variance from the database, calls Gemini for new or changed inputs, and runs the figure check |
 | `scripts/evaluate_ai.py` | Compares the drafts with the planted events. **The only script that reads `data/truth/`** |
+| `scripts/review_export.py` | Writes the review workbook `data/check/review.xlsx` |
+| `scripts/review_import.py` | Checks the workbook and writes the review columns back to `data/ai/reviews.csv` |
 | `prompts/variance_comment.md` | The instructions given to the model (system prompt) |
 | `config/settings.yaml` → `ai:` | Model fallback list, temperature, call limits, company context |
 
@@ -51,6 +54,17 @@ Gemini must return JSON in a fixed structure. The API enforces it, so the answer
 Each entry in `data/ai/drafts.json` also stores the variance_id, a hash of the input, the model name, a timestamp and the figure check result.
 
 `data/ai/reviews.csv` has one row per variance with three empty columns for the controller: `status`, `final_comment` and `reviewer_note`. A rerun adds rows for new variances but never changes rows that are already there.
+
+## The controller's review
+
+Reviewing 71 comments in a CSV file is awkward, so the review happens in Excel:
+
+1. `review_export.py` writes `data/check/review.xlsx`, in the same row order as `reviews.csv`. Each row shows the variance (period, account, cost centre, amount, %), the AI comment, its cause category and persistence, then the three review columns: `status`, `final_comment`, `reviewer_note`. The status column has a drop-down (approved, edited, rejected), the comment columns wrap their text, and the top row is frozen. Review work already in `reviews.csv` is shown again. The script will not overwrite a workbook that holds work not yet imported.
+2. The controller fills in the review columns.
+3. `review_import.py` writes only `variance_id`, `status`, `final_comment` and `reviewer_note` back to `reviews.csv`. It stops with an error, and changes nothing, if a status is anything other than empty, approved, edited or rejected, if a row marked edited has no final comment, or if a variance_id is missing.
+4. `build_db.py` runs the same status checks on `reviews.csv` before it builds anything, so a hand-edited CSV with a bad status cannot reach the dashboard.
+
+`scripts/test_review.py` tests the status rules. The workbook lives in `data/check/`, which is not committed; `reviews.csv` is the record that is committed.
 
 ## The figure check (no AI)
 
@@ -121,7 +135,15 @@ v2 prompt changes:
 - Write amounts as positive numbers, and use the words favourable and unfavourable for direction.
 - Never calculate new totals or differences.
 
-v1 results (71 drafts): 10/15 planted-event variances correct, 9/55 noise false claims (strict: 30/55 claiming any cause), 69/71 figure check passed, 12/71 sign errors.
+| Result (71 drafts) | v1 | v2 |
+|---|---|---|
+| Planted-event variances correct | 10/15 | 13/15 |
+| Noise: false claims | 9/55 | 5/55 |
+| Noise: any cause (strict) | 30/55 | 40/55 |
+| Figure check passed | 69/71 | 71/71 |
+| Sign errors | 12/71 | 0/71 |
+
+v2 was written after the v1 errors were known, so its score is measured on the same events the prompt was tuned against (see the README). The strict noise measure rose because v2 names the real invoice behind a noise variance more often, as one-off or timing; under the false-claim measure that is a correct reading.
 
 ## Known limits
 
