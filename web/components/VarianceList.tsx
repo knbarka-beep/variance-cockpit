@@ -1,5 +1,5 @@
 import { data, type Variance } from "@/lib/data";
-import { materialsSplit, millions, pct } from "@/lib/format";
+import { label, materialsSplit, millions, pct } from "@/lib/format";
 
 type Props = {
   significant: { top: Variance[]; subRows: Map<string, Variance> };
@@ -35,7 +35,7 @@ function Row({ v, onSelect, sub }: { v: Variance; onSelect: (id: string) => void
         </span>
         {split && <span className="small">{split}</span>}
         <span className="small muted">
-          AI: {v.ai_cause_category ?? "no draft"} · <span className="status">{v.review_status ? STATUS[v.review_status] : "Not reviewed"}</span>
+          AI: {v.ai_cause_category ? label(v.ai_cause_category) : "No draft"} · <span className="status">{v.review_status ? STATUS[v.review_status] : "Not reviewed"}</span>
         </span>
       </button>
     </li>

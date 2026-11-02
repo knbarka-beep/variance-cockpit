@@ -10,6 +10,13 @@ export const amount = (v: number) =>
 /** 8,9 % */
 export const pct = (v: number, decimals = 1) => `${Math.abs(v).toFixed(decimals).replace(".", ",")} %`;
 
+/** +14.432 / −165.256: signed, for parts that must add up to a total. */
+export const signed = (v: number) => `${v >= 0 ? "+" : ""}${amount(v)}`;
+
+/** "one_off" -> "One-off": display only, the data keeps its codes. */
+export const label = (code?: string | null) =>
+  code ? code[0].toUpperCase() + code.slice(1).replace(/_/g, "-") : "";
+
 export const direction = (favourable: boolean) => (favourable ? "Favourable" : "Unfavourable");
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];

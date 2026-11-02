@@ -11,7 +11,10 @@ export type BridgeStep = {
   period: string; step_no: number; step: string; step_type: string;
   amount_dkk: number; bar_start_dkk: number; bar_end_dkk: number;
 };
-export type AccountMonth = { period: string; account_no: number; cost_centre: string; actual_dkk: number; budget_dkk: number };
+export type AccountMonth = {
+  period: string; account_no: number; account_name: string; pl_group: string; cost_centre: string;
+  actual_dkk: number; budget_dkk: number; variance_profit_dkk: number;
+};
 export type Flexed = {
   period: string; account_no: number; account_name: string; volume_pct_of_budget: number;
   total_variance_profit_dkk: number; price_usage_variance_profit_dkk: number; volume_variance_profit_dkk: number;
@@ -35,6 +38,7 @@ export type Dashboard = {
     materiality: { min_pct: number; min_amount_dkk: number } };
   kpis: Kpi[]; bridge: BridgeStep[]; accountMonth: AccountMonth[]; flexed: Flexed[];
   transactions: Transaction[]; variances: Variance[]; aiQuality: AiQuality;
+  monthSummaries: Record<string, string>; // the controller's sentence per month; missing = not shown
 };
 
 export const data = raw as unknown as Dashboard;

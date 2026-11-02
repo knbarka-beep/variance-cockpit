@@ -1,13 +1,16 @@
 // Run: npm test   (Node runs TypeScript directly)
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { amount, groupSignificant, last12, materialsSplit, millions, monthLabel, pct } from "./format.ts";
+import { label, signed, amount, groupSignificant, last12, materialsSplit, millions, monthLabel, pct } from "./format.ts";
 
 test("European number format", () => {
   assert.equal(millions(-236321), "DKK 0,24m");
   assert.equal(amount(-236321.4), "−236.321");
   assert.equal(pct(-8.94), "8,9 %");
   assert.equal(monthLabel("2026-09"), "Sep 2026");
+  assert.equal(signed(14432), "+14.432");
+  assert.equal(label("one_off"), "One-off");
+  assert.equal(label("unclear"), "Unclear");
   assert.deepEqual(last12(["a", "b", "c"], "b"), ["a", "b"]);
 });
 

@@ -46,6 +46,12 @@ export default function Dashboard() {
       </p>
 
       <KpiRow period={period} significant={significant} />
+      {data.monthSummaries[period] && (
+        <section className="card" aria-label="Controller's summary">
+          <h3>Controller&apos;s summary</h3>
+          <p className="summary" style={{ marginTop: 4 }}>{data.monthSummaries[period]}</p>
+        </section>
+      )}
 
       <div className="main">
         <Bridge period={period} group={group} onGroup={setGroup} />

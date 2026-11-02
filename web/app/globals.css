@@ -45,7 +45,7 @@ h3 { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spac
 p { margin: 0; }
 button { font: inherit; color: inherit; cursor: pointer; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .muted { color: var(--muted); }
 .small { font-size: 0.8rem; }
 .fav { color: var(--fav); }
@@ -111,3 +111,12 @@ footer a, .card a { color: var(--accent); }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 @media (max-width: 599px) { .kpi .value { font-size: 1.2rem; } }
+
+/* Chart tooltip: theme colours in both modes */
+.tooltip { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 10px; font-size: 0.8rem; box-shadow: 0 2px 8px rgb(0 0 0 / 0.15); max-width: 320px; }
+.tooltip-title { font-weight: 600; margin-bottom: 4px; }
+.tooltip table { font-size: 0.8rem; }
+.tooltip td { padding: 2px 0; border: none; }
+.tooltip td.num { padding-left: 16px; }
+.tooltip tr.strong td { font-weight: 600; border-top: 1px solid var(--border); padding-top: 4px; }
+.summary { font-size: 1rem; }

@@ -64,6 +64,8 @@ Reviewing 71 comments in a CSV file is awkward, so the review happens in Excel:
 3. `review_import.py` writes only `variance_id`, `status`, `final_comment` and `reviewer_note` back to `reviews.csv`. It stops with an error, and changes nothing, if a status is anything other than empty, approved, edited or rejected, if a row marked edited has no final comment, or if a variance_id is missing.
 4. `build_db.py` runs the same status checks on `reviews.csv` before it builds anything, so a hand-edited CSV with a bad status cannot reach the dashboard.
 
+**Month summary.** The controller can also write one summary sentence per month in `data/ai/month_summaries.csv` (columns `period`, `summary`). It is written by a person, not by AI. `build_db.py` exports the filled rows to `month_summaries.json`, and the dashboard shows the sentence under the KPI row. An empty or missing sentence shows nothing.
+
 `scripts/test_review.py` tests the status rules. The workbook lives in `data/check/`, which is not committed; `reviews.csv` is the record that is committed.
 
 ## The figure check (no AI)

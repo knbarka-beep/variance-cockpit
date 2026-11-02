@@ -53,6 +53,9 @@ if not Path("data/ai/drafts.json").exists():
     Path("data/ai/drafts.json").write_text("[]\n", encoding="utf-8")
 if not Path("data/ai/reviews.csv").exists():
     Path("data/ai/reviews.csv").write_text("variance_id,status,final_comment,reviewer_note\n", encoding="utf-8")
+# One summary sentence per month, written by the controller in the review (not by AI). Empty = not shown.
+if not Path("data/ai/month_summaries.csv").exists():
+    Path("data/ai/month_summaries.csv").write_text("period,summary\n", encoding="utf-8")
 # Same status rules as review_import.py: stop before building on a bad review file.
 sys.path.insert(0, str(Path(__file__).parent))
 from review_import import check_reviews, read_csv  # noqa: E402
@@ -115,6 +118,11 @@ EXPORTS = {
                        ORDER BY cell_id, posting_date, line_id""",
     # AI draft and controller's final comment side by side.
     "comments": "SELECT * FROM v_comments ORDER BY period, rank_in_month",
+    # The controller's summary sentence per month; empty rows are left out.
+    "month_summaries": """SELECT period, trim(summary) AS summary
+                          FROM read_csv('data/ai/month_summaries.csv', header = true,
+                                        columns = {'period': 'VARCHAR', 'summary': 'VARCHAR'})
+                          WHERE trim(coalesce(summary, '')) <> '' ORDER BY period""",
 }
 
 EXPORT.mkdir(parents=True, exist_ok=True)

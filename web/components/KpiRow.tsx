@@ -1,6 +1,10 @@
-import { Line, LineChart, ResponsiveContainer } from "recharts";
-import { data } from "@/lib/data";
-import { direction, last12, millions, pct } from "@/lib/format";
+import { Line, LineChart, ResponsiveContainer, Tooltip } from "recharts";
+import { data, type Kpi } from "@/lib/data";
+import { direction, last12, millions, monthLabel, pct } from "@/lib/format";
+import ChartTooltip from "./ChartTooltip";
+
+const revenueTip = (k: Kpi) => ({ title: monthLabel(k.period), rows: [
+  { label: "Actual", value: millions(k.revenue_actual_dkk) }, { label: "Budget", value: millions(k.revenue_budget_dkk) }] });
 
 type Props = { period: string; significant: { count: number; accounts: number; priceEffects: number } };
 
@@ -29,8 +33,9 @@ export default function KpiRow({ period, significant }: Props) {
         <div style={{ height: 36 }} role="img" aria-label="Revenue, last 12 months: actual (solid) against budget (dashed)">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={trend} margin={{ top: 4, right: 2, bottom: 2, left: 2 }}>
-              <Line dataKey="revenue_budget_dkk" stroke="var(--budget)" strokeDasharray="3 3" dot={false} strokeWidth={1.5} isAnimationActive={false} />
-              <Line dataKey="revenue_actual_dkk" stroke="var(--accent)" dot={false} strokeWidth={2} isAnimationActive={false} />
+              <Tooltip cursor={{ stroke: "var(--border)" }} content={<ChartTooltip<Kpi> render={revenueTip} />} />
+              <Line dataKey="revenue_budget_dkk" stroke="var(--budget)" strokeDasharray="3 3" dot={false} activeDot={{ r: 3, fill: "var(--budget)", stroke: "var(--surface)" }} strokeWidth={1.5} isAnimationActive={false} />
+              <Line dataKey="revenue_actual_dkk" stroke="var(--accent)" dot={false} activeDot={{ r: 3, fill: "var(--accent)", stroke: "var(--surface)" }} strokeWidth={2} isAnimationActive={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
