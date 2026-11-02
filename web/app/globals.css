@@ -99,7 +99,7 @@ dialog.drill { margin: 0 0 0 auto; height: 100dvh; max-height: 100dvh; width: mi
 dialog.drill::backdrop { background: rgb(15 23 42 / 0.5); }
 .drill-body { padding: 16px; display: grid; gap: 16px; }
 .drill-head { display: flex; justify-content: space-between; gap: 8px; align-items: start; position: sticky; top: 0; background: var(--surface); padding: 16px; border-bottom: 1px solid var(--border); }
-.quote { border-left: 3px solid var(--accent); padding-left: 12px; }
+.quote { background: var(--bg); border-radius: var(--radius); padding: 8px 12px; }
 .tablewrap { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
 th, td { padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
