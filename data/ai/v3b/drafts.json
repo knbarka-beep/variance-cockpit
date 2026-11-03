@@ -274,5 +274,133 @@
       "word_count": 44,
       "consistency_flags": []
     }
+  },
+  {
+    "variance_id": "2025-03_4050_Sales",
+    "input_hash": "c55d02b2d73afa14",
+    "model": "gemini-3.6-flash",
+    "prompt_version": "v3b",
+    "created_at": "2026-11-03T18:09:36+00:00",
+    "output": {
+      "comment": "Marketing shows a favourable variance of DKK 109.452,58 against budget, with actual spend at DKK 18.380,75 compared to a budget of DKK 127.833,33. The main driver is lower costs from Messepartner Danmark ApS, down by DKK 54.767,23 against its average over the previous three months. This looks to be timing.",
+      "cause_category": "timing",
+      "persistence": "timing",
+      "figures_cited": [
+        109452.58,
+        18380.75,
+        127833.33,
+        54767.23
+      ],
+      "no_clear_cause": false
+    },
+    "figure_check": {
+      "figures_found": 4,
+      "figures_matched": 4,
+      "unmatched": [],
+      "check_passed": true,
+      "word_count": 50,
+      "consistency_flags": []
+    }
+  },
+  {
+    "variance_id": "2025-04_4040_Administration",
+    "input_hash": "4279bd6b6092fa37",
+    "model": "gemini-3.6-flash",
+    "prompt_version": "v3b",
+    "created_at": "2026-11-03T18:09:57+00:00",
+    "output": {
+      "comment": "IT costs in Administration were DKK 100.874,97 unfavourable to budget. The variance was driven by Nordlys Software A/S, which increased by DKK 115.770,78 over its three-month average to DKK 153.575,65. Previous months have fluctuated between favourable and unfavourable results, indicating this is a one-off variance rather than a persistent trend.",
+      "cause_category": "one_off",
+      "persistence": "one_off",
+      "figures_cited": [
+        100874.97,
+        115770.78,
+        153575.65
+      ],
+      "no_clear_cause": false
+    },
+    "figure_check": {
+      "figures_found": 3,
+      "figures_matched": 3,
+      "unmatched": [],
+      "check_passed": true,
+      "word_count": 50,
+      "consistency_flags": []
+    }
+  },
+  {
+    "variance_id": "2025-04_4050_Sales",
+    "input_hash": "184d55875cbedf7a",
+    "model": "gemini-3.6-flash",
+    "prompt_version": "v3b",
+    "created_at": "2026-11-03T18:10:15+00:00",
+    "output": {
+      "comment": "Marketing expenses for April show an unfavourable variance of DKK 77.288,07 against budget. The main driver is Kommunikationshuset Fyn ApS, where spend increased by DKK 103.646,98 due to an online campaign invoice. Previous months were below budget, so this appears to be a one-off variance rather than a persistent trend.",
+      "cause_category": "one_off",
+      "persistence": "one_off",
+      "figures_cited": [
+        77288.07,
+        103646.98
+      ],
+      "no_clear_cause": false
+    },
+    "figure_check": {
+      "figures_found": 2,
+      "figures_matched": 2,
+      "unmatched": [],
+      "check_passed": true,
+      "word_count": 50,
+      "consistency_flags": []
+    }
+  },
+  {
+    "variance_id": "2025-04_4010_Production",
+    "input_hash": "44bbb3d463363b50",
+    "model": "gemini-3.6-flash",
+    "prompt_version": "v3b",
+    "created_at": "2026-11-03T18:10:32+00:00",
+    "output": {
+      "comment": "Repairs and maintenance in Production shows a favourable variance of DKK 51.715,01 against budget. The main driver is lower spend with Hydra-Service Danmark ApS, which was DKK 78.099,94 lower than its previous three-month average. This variance appears to be related to timing.",
+      "cause_category": "timing",
+      "persistence": "timing",
+      "figures_cited": [
+        51715.01,
+        78099.94
+      ],
+      "no_clear_cause": false
+    },
+    "figure_check": {
+      "figures_found": 2,
+      "figures_matched": 2,
+      "unmatched": [],
+      "check_passed": true,
+      "word_count": 42,
+      "consistency_flags": []
+    }
+  },
+  {
+    "variance_id": "2025-05_4010_Production",
+    "input_hash": "728fbf233a47cd49",
+    "model": "gemini-3.6-flash",
+    "prompt_version": "v3b",
+    "created_at": "2026-11-03T18:10:49+00:00",
+    "output": {
+      "comment": "Repairs and maintenance in Production generated an unfavourable variance of DKK 73.837,20. The main driver was Fynsk Maskinreparation ApS, whose cost increased by DKK 83.402,74 compared to its average for the previous three months. As previous months showed favourable variances, this appears to be a one-off increase.",
+      "cause_category": "one_off",
+      "persistence": "one_off",
+      "figures_cited": [
+        73837.2,
+        83402.74
+      ],
+      "no_clear_cause": false
+    },
+    "figure_check": {
+      "figures_found": 2,
+      "figures_matched": 2,
+      "unmatched": [],
+      "check_passed": true,
+      "word_count": 47,
+      "consistency_flags": []
+    }
   }
 ]
