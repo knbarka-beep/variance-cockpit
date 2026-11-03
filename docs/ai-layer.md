@@ -66,6 +66,8 @@ Reviewing 71 comments in a CSV file is awkward, so the review happens in Excel:
 
 **Month summary.** The controller can also write one summary sentence per month in `data/ai/month_summaries.csv` (columns `period`, `summary`). It is written by a person, not by AI. `build_db.py` exports the filled rows to `month_summaries.json`, and the dashboard shows the sentence under the KPI row. An empty or missing sentence shows nothing.
 
+**Suggested edits from Claude.** For this project the workbook also carries three columns written by Claude: `SUGGESTED status`, `SUGGESTED final_comment` and `why suggested`, plus the three largest ledger lines and the figure-check and consistency flags for each draft. They are suggestions only; `review_import.py` reads the controller's own three columns and ignores them. The suggestions use only the ledger, the budget and months up to the row's month, never the answer key. `scripts/check_suggestions.py` checks them the way the AI drafts are checked: every figure must match the row's AI input or the account's own history up to that month; no later month, no "remained" or "third month in a row" that the ledger does not support; no American spelling; at most 60 words and no Cause or Persistence labels. A limit it shares with the figure check: an amount rounded to millions (DKK 0,31m) has a tolerance of DKK 5.000, so with many numbers in a row's input a wrong rounded amount can still find a match.
+
 `scripts/test_review.py` tests the status rules. The workbook lives in `data/check/`, which is not committed; `reviews.csv` is the record that is committed.
 
 ## The figure check (no AI)
