@@ -249,5 +249,30 @@
       "word_count": 45,
       "consistency_flags": []
     }
+  },
+  {
+    "variance_id": "2025-02_4010_Production",
+    "input_hash": "a170b907c798278e",
+    "model": "gemini-3.6-flash",
+    "prompt_version": "v3b",
+    "created_at": "2026-11-03T17:47:17+00:00",
+    "output": {
+      "comment": "Repairs and maintenance showed a favourable total variance of DKK 101.918,75 in February. The main driver was reduced spend with Hydra-Service Danmark ApS, down by DKK 62.171,79 compared to its previous three-month average. Given fluctuations in previous months, this looks like a timing effect.",
+      "cause_category": "timing",
+      "persistence": "timing",
+      "figures_cited": [
+        101918.75,
+        62171.79
+      ],
+      "no_clear_cause": false
+    },
+    "figure_check": {
+      "figures_found": 2,
+      "figures_matched": 2,
+      "unmatched": [],
+      "check_passed": true,
+      "word_count": 44,
+      "consistency_flags": []
+    }
   }
 ]
