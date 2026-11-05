@@ -17,8 +17,10 @@ by = {s: sorted(v for v, t in S.items() if t[0] == s) for s in ("approved", "edi
 edited, approved = rng.sample(by["edited"], 6), rng.sample(by["approved"], 6)
 ```
 
-Result: `data/check/spot_check_sample.csv`, committed alone in 23722ed
-("Pre-register spot-check sample (seed 20261105)"). `data/check/` is gitignored, so the file was added with
+Result: `data/check/spot_check_sample.csv`, committed alone in b176b87
+("Pre-register spot-check sample (seed 20261105)", 2026-11-05 15:57 +0100). The commit was first 23722ed; the
+email rewrite on the same day (see step 6) gave every commit a new hash. Date, message and file content are unchanged
+(file blob 105a432 in both). `data/check/` is gitignored, so the file was added with
 `git add -f`; the .gitignore was not changed in that commit, to keep it alone.
 
 **Rule (fixed now, not changed after the result is seen).**
