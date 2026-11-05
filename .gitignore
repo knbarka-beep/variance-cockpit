@@ -7,3 +7,6 @@ data/check/*
 # ...except the pre-registered spot-check sample, which must be public.
 !data/check/spot_check_sample.csv
 data/variance.duckdb*
+
+.vercel
+.env*
