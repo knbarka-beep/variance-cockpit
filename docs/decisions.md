@@ -112,3 +112,8 @@ email rewrite on the same day (see step 6) gave every commit a new hash. Date, m
   60 words) with no change to the numbers. `build_db.py`: all 7 checks pass.
 - Status counts are unchanged at 35 approved, 30 edited, 6 rejected (one row moved each way), 71 in total, 18 by Knut.
 - `review_import.py` was not run.
+
+## Prompt B, A2. Month summary for Feb 2025
+
+- Nothing changed. The sentence only says repairs and maintenance was DKK 0,10m under budget; it names no supplier, so it
+  does not repeat the missed driver. Still `author = claude-draft`; `check_month_summaries.py` still passes.
