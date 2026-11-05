@@ -79,3 +79,18 @@ Result: `data/check/spot_check_sample.csv`, committed alone in 23722ed
 - Panel metric notes changed from "used as written / changed by the controller / rewritten" to the status rules,
   because no controller has changed them yet.
 - README first line no longer says "a controller reviews them"; it says what actually happens.
+
+## 6. Prep for deploy
+
+- UI test in headless Edge over the DevTools protocol, with a small Node script in the session scratchpad (no new
+  dependency such as Playwright). 15 of 15 checks passed: month summary label and text for all 24 months, statuses
+  "(suggested by Claude)" in the list, drill-down with review block and Claude's reason, Esc closes it, Tab reaches the
+  controls and rows with a visible outline on every focused element, Enter opens a row, dark mode, no horizontal scroll at 375 px
+  (page and drill-down). Four first-run failures were bugs in the test script (wrong selector for the native `<dialog>`,
+  upper-case headings, Enter without a key text), not in the dashboard.
+- `.gitignore`: added `.env*` (was only `.env`) and `private/`; `data/check/` became `data/check/*` with an exception for
+  `spot_check_sample.csv`, so the pre-registration is visibly meant to be public. `review.xlsx` and `spot_check.xlsx` stay ignored.
+- Safety scan of the full git history (all branches): no keys, tokens or `.env` files ever committed; no absolute personal
+  paths; no phone numbers; no thesis, ECIT or coursework references. Two findings, history not rewritten:
+  1. Every commit's author email was a personal address. Fixed on 2026-11-05: history rewritten to the GitHub noreply address.
+  2. `CLAUDE.md` (committed) named the author's employer in the rule that forbids using anything from it. Fixed on 2026-11-05: rephrased to "the author's employer", also in the history.

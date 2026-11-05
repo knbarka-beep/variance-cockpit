@@ -1,5 +1,9 @@
 .venv/
-.env
+.env*
+private/
 __pycache__/
-data/check/
+# Controller's and Knut's working files (review.xlsx, spot_check.xlsx, ...) stay local.
+data/check/*
+# ...except the pre-registered spot-check sample, which must be public.
+!data/check/spot_check_sample.csv
 data/variance.duckdb*
