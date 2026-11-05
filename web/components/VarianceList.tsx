@@ -21,8 +21,10 @@ export function splitFor(v: Variance) {
   return s ? materialsSplit(s) : null;
 }
 
-function Row({ v, onSelect, sub }: { v: Variance; onSelect: (id: string) => void; sub?: boolean }) {
-  const split = splitFor(v);
+/** When an account row has a price-effect sub-row, the account row carries the AI label and status and the
+ *  sub-row carries the price/volume split, so nothing is shown twice. Each row still opens its own draft. */
+function Row({ v, onSelect, sub, hasSub }: { v: Variance; onSelect: (id: string) => void; sub?: boolean; hasSub?: boolean }) {
+  const split = hasSub ? null : splitFor(v);
   const name = `${v.account_no} ${v.account_name}${v.variance_type === "price" ? " (price effect)" : ""}`;
   return (
     <li className={sub ? "subrow" : undefined}>
@@ -38,9 +40,11 @@ function Row({ v, onSelect, sub }: { v: Variance; onSelect: (id: string) => void
           <span className="num">{pct(v.variance_pct)}{v.variance_type === "price" ? " vs flexed budget" : ""}</span>
         </span>
         {split && <span className="small">{split}</span>}
-        <span className="small muted">
-          AI: {v.ai_cause_category ? label(v.ai_cause_category) : "No draft"} · <span className="status">{statusText(v)}</span>
-        </span>
+        {!sub && (
+          <span className="small muted">
+            AI: {v.ai_cause_category ? label(v.ai_cause_category) : "No draft"} · <span className="status">{statusText(v)}</span>
+          </span>
+        )}
       </button>
     </li>
   );
@@ -61,7 +65,7 @@ export default function VarianceList({ significant, group, onClearGroup, onSelec
       ) : (
         <ul className="vlist">
           {shown.map((v) => [
-            <Row key={v.variance_id} v={v} onSelect={onSelect} />,
+            <Row key={v.variance_id} v={v} onSelect={onSelect} hasSub={significant.subRows.has(v.cell_id)} />,
             significant.subRows.has(v.cell_id) && (
               <Row key={`${v.variance_id}-sub`} v={significant.subRows.get(v.cell_id)!} onSelect={onSelect} sub />
             ),

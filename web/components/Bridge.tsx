@@ -45,7 +45,7 @@ export default function Bridge({ period, group, onGroup }: Props) {
   const kind = (s: Step) => s.step_type === "total" ? "total" : s.amount_dkk >= 0 ? "fav" : "unfav";
 
   return (
-    <section className="card" aria-labelledby="bridge-title">
+    <section className="card bridge-card" aria-labelledby="bridge-title">
       <div className="section-head">
         <h2 id="bridge-title">EBITDA bridge: budget to actual, {monthLabel(period)}</h2>
         <p className="muted small">Click a bar to filter the list</p>

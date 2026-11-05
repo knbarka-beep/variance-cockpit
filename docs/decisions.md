@@ -208,3 +208,14 @@ email rewrite on the same day (see step 6) gave every commit a new hash. Date, m
   gitignored by `.env*`.
 - B3: live site checked in headless Edge with the same QA script as A8: 17 of 17 pass, including all B3 items.
 - B4: live link at the top of the README and as the repo's website.
+
+## Layout fixes after launch
+
+- Bridge and list: the grid now uses `align-items: start`, so each card takes its own height, and the bridge card is
+  `position: sticky` (16 px from the top) from 1024 px, where the two cards sit side by side. Below that the cards stack and
+  nothing is sticky. Checked in headless Edge for Jun and Sep 2026, filtered and unfiltered, 1280 and 375 px, light and dark:
+  51 of 51 checks pass, no console errors.
+- Price rows: when an account row has a price-effect sub-row, the account row shows the AI label and status and the
+  sub-row shows only the price/volume split and "vs flexed budget". Each row still opens its own draft in the drill-down.
+  Counts unchanged against the live site before the change: Jun 2026 list 5, KPI 5; Sep 2026 list 6, KPI 6; panel 35/30/6.
+- `data/ai/evaluation.json` still holds an older partial v3b run (10 drafts); the README figure 16 of 71 is from the later run; the file is not shown on the dashboard.

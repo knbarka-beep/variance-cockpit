@@ -74,7 +74,11 @@ select { font: inherit; color: var(--text); background: var(--surface); border: 
 
 /* Main: bridge + list */
 .main { display: grid; gap: 16px; }
-@media (min-width: 1024px) { .main { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); } }
+.main { align-items: start; } /* each card takes its own height */
+@media (min-width: 1024px) {
+  .main { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+  .main > .bridge-card { position: sticky; top: 16px; } /* bridge stays in view while a long list scrolls */
+}
 .section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
 .bar { transition: opacity 150ms; }
 .bar-total { fill: var(--total); }
