@@ -39,7 +39,7 @@ export type Dashboard = {
     materiality: { min_pct: number; min_amount_dkk: number } };
   kpis: Kpi[]; bridge: BridgeStep[]; accountMonth: AccountMonth[]; flexed: Flexed[];
   transactions: Transaction[]; variances: Variance[]; aiQuality: AiQuality;
-  monthSummaries: Record<string, string>; // the controller's sentence per month; missing = not shown
+  monthSummaries: Record<string, { text: string; author: string }>; // one sentence per month; author "claude-draft" = drafted by Claude
 };
 
 export const data = raw as unknown as Dashboard;

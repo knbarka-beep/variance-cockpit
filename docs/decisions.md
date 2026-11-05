@@ -52,3 +52,18 @@ Result: `data/check/spot_check_sample.csv`, committed alone in 23722ed
 - `review_import.py` marks imported rows with a status as `knut`. Note: running it now would overwrite Claude's statuses with
   the empty controller columns from `review.xlsx`; it is meant for a full review by Knut, not for the spot check.
 - Dashboard: status reads e.g. "Approved (suggested by Claude)" or "(checked by Knut)"; the drill-down heading is now "Review", not "Controller review".
+
+## 4. Month summaries (drafts by Claude)
+
+- One sentence for each of the 24 months the dashboard shows (2024-10 to 2026-09), `author = claude-draft`.
+- Written from the views for that month only: KPI row, P&L groups and material variances, plus the reviewed comments for
+  drivers (for example "mostly Nordvik Maskinfabrik A/S" comes from Claude's suggested comments, two of which are in Knut's sample).
+- Only amounts are cited for EBITDA, not percentages: with a budget near zero (July) the percentage is meaningless (-730 %).
+- New check script `scripts/check_month_summaries.py` reuses `draft_comments.figure_check` and `check_suggestions.text_problems`.
+  Input per month = that month's KPI row, P&L groups and material variances; nothing later. All 24 pass (62 figures).
+  A wrong figure (DKK 0,99m) and "will continue in 2027" were tried and caught.
+- The check does not verify "over"/"under" or "third month in a row"; I checked those by hand against `v_material_variances`.
+- Honest note: earlier in this same session I read `config/settings.yaml`, whose `events` section describes the planted
+  events (the same information as the answer key, in config form). I did not read `data/truth/`. The summaries only say what
+  the views and ledger texts show, but they were not written blind.
+- Dashboard: the card reads "Draft summary (Claude)" when `author = claude-draft`, otherwise "Controller's summary".

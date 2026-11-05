@@ -22,6 +22,7 @@ export default function Dashboard() {
     .sort((a, b) => Math.abs(b.variance_profit_dkk) - Math.abs(a.variance_profit_dkk));
   const significant = groupSignificant(rows);
   const i = meta.periods.indexOf(period);
+  const summary = data.monthSummaries[period];
   const go = (p: string) => { setPeriod(p); setGroup(null); };
 
   return (
@@ -46,10 +47,10 @@ export default function Dashboard() {
       </p>
 
       <KpiRow period={period} significant={significant} />
-      {data.monthSummaries[period] && (
-        <section className="card" aria-label="Controller's summary">
-          <h3>Controller&apos;s summary</h3>
-          <p className="summary" style={{ marginTop: 4 }}>{data.monthSummaries[period]}</p>
+      {summary && (
+        <section className="card" aria-labelledby="summary-title">
+          <h3 id="summary-title">{summary.author === "claude-draft" ? "Draft summary (Claude)" : "Controller's summary"}</h3>
+          <p className="summary" style={{ marginTop: 4 }}>{summary.text}</p>
         </section>
       )}
 
