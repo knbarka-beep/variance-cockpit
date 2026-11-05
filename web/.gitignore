@@ -41,4 +41,3 @@ yarn-error.log*
 next-env.d.ts
 
 # generated from ../data by scripts/prepare-data.mjs
-/lib/dashboard.json

@@ -65,7 +65,8 @@ export default function Dashboard() {
         Significant variance: at least {meta.materiality.min_pct.toLocaleString("da-DK")} % and DKK{" "}
         {meta.materiality.min_amount_dkk.toLocaleString("da-DK")} from budget, per account, cost centre and month.
         AI comments are drafts written once and stored; this page never calls an AI model.{" "}
-        <a href="https://github.com/knbarka-beep/variance-cockpit">Method and limitations on GitHub</a>.
+        <a href="https://github.com/knbarka-beep/variance-cockpit/blob/main/docs/method-draft.md">Method and limitations</a>{" · "}
+        <a href="https://github.com/knbarka-beep/variance-cockpit">Code on GitHub</a>.
       </footer>
 
       <Drilldown id={selected} onClose={() => setSelected(null)} />

@@ -1,6 +1,12 @@
 // Copies the fields the dashboard needs from ../data/export into lib/dashboard.json.
 // AI quality: only the aggregate scores for the drafts shown, never which variances are planted events.
-import { readFileSync, writeFileSync } from "node:fs";
+// On Vercel (root directory web/) ../data is not there: the committed lib/dashboard.json is used as it is.
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+
+if (!existsSync(new URL("../../data/export/meta.json", import.meta.url))) {
+  console.log("../data/export not found: using the committed lib/dashboard.json");
+  process.exit(0);
+}
 
 const load = (p) => JSON.parse(readFileSync(new URL(`../../data/${p}`, import.meta.url), "utf8"));
 const pick = (o, keys) => Object.fromEntries(keys.map((k) => [k, o[k]]));

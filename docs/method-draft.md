@@ -1,6 +1,4 @@
-# Method (draft, not yet reviewed)
-
-> Draft for review. Not linked from the README or the dashboard yet.
+# Method
 
 ## The data
 

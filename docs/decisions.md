@@ -162,3 +162,28 @@ email rewrite on the same day (see step 6) gave every commit a new hash. Date, m
 - `private/cv-line.md` (three lines, 23 to 25 words) and `private/pitch.md` (English 83 words, Danish 74, spoken 75)
   written; both gitignored, not committed. No video script. Skill levels not upgraded: the CV lines say what was built,
   not how well Knut knows Python or SQL.
+
+## Prompt B, A8. Ready for Vercel, and QA
+
+- **Data on Vercel.** With `web/` as root directory, `../data/export` is not part of the build. Chosen: commit the copied
+  export, `web/lib/dashboard.json` (about 290 KB), and let `prepare-data.mjs` skip the copy when `../data/export` is missing.
+  Locally every `npm run build` still refreshes it from `data/export`, so the rule is: build locally, then commit
+  `dashboard.json` with the data change. Not chosen: Vercel's "include files outside the root directory" setting, because
+  the site would then depend on a project setting that is easy to miss.
+- Tested by copying only the tracked files of `web/` to a folder outside the repo, `npm ci` and `npm run build`: the build
+  used the committed file and succeeded, with `og.png` and `404.html` in the output.
+- **Metadata.** Title "Variance Cockpit (fictional data)", a meta description that says the data is synthetic, Open Graph and
+  Twitter card with `web/public/og.png` (a 1200 x 630 screenshot of September 2026). `metadataBase` comes from Vercel's
+  `VERCEL_PROJECT_PRODUCTION_URL`, so the image link is absolute on the live site; locally it falls back to localhost.
+- **Footer.** Links to the method page on GitHub and to the repo. `docs/method-draft.md` lost its "draft, not linked"
+  banner, because it is now linked. The file name is kept so older links still work.
+- **404 page.** New `web/app/not-found.tsx`, so "(fictional)" is visible on every page, not only the dashboard.
+- **Full data flow.** `generate_data.py` (data/raw unchanged afterwards, same seed), `check_data.py`, `build_db.py` (7 of 7
+  checks), `test_draft_comments.py`, `test_review.py`, `check_suggestions.py` (71, 0 failed), `check_month_summaries.py`
+  (24 passed), `npm test` (4 passed), `tsc`, `eslint`, `npm run build`: all pass. `evaluate_ai.py` was not rerun: it would
+  rewrite `data/ai/evaluation.json`, which this run must not change.
+- **QA in headless Edge**, 17 of 17: the B3 figures for September 2026, 16 of 18 and 35 + 30 + 6 = 71 on the panel,
+  "Draft summary (Claude)", no "not reviewed" in any of the 24 months, Tab reaches the bridge buttons, the variance list
+  and the drill-down, a visible focus ring on every stop, no horizontal scroll at 375 px, "(fictional)" on the 404 page,
+  no console errors. Two first-run failures were test bugs (upper-case CSS and the test server's own 404 page).
+- **Screenshots** in `docs/screenshots/`: desktop light and dark, 375 px, drill-down, focus in the drill-down, AI quality panel.
