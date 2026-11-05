@@ -1,0 +1,19 @@
+variance_id,claude_status,why_selected
+2025-12_4010_Production,rejected,all rejected rows
+2026-03_4050_Sales,rejected,all rejected rows
+2026-04_4040_Administration,rejected,all rejected rows
+2026-05_4050_Sales,rejected,all rejected rows
+2026-07_1010_Sales,rejected,all rejected rows
+2026-09_1010_Sales,rejected,all rejected rows
+2025-03_4050_Sales,edited,random edited (seed 20261105)
+2026-06_4090_Administration,edited,random edited (seed 20261105)
+2026-07_4090_Administration,edited,random edited (seed 20261105)
+2026-08_3030_Production,edited,random edited (seed 20261105)
+2026-09_3020_Production,edited,random edited (seed 20261105)
+2026-09_3030_Production,edited,random edited (seed 20261105)
+2025-02_4010_Production,approved,random approved (seed 20261105)
+2025-05_4060_Sales,approved,random approved (seed 20261105)
+2025-05_4090_Administration,approved,random approved (seed 20261105)
+2026-02_4090_Administration,approved,random approved (seed 20261105)
+2026-03_4040_Administration,approved,random approved (seed 20261105)
+2026-07_4050_Sales,approved,random approved (seed 20261105)
