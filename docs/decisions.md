@@ -67,3 +67,15 @@ Result: `data/check/spot_check_sample.csv`, committed alone in 23722ed
   events (the same information as the answer key, in config form). I did not read `data/truth/`. The summaries only say what
   the views and ledger texts show, but they were not written blind.
 - Dashboard: the card reads "Draft summary (Claude)" when `author = claude-draft`, otherwise "Controller's summary".
+
+## 5. Method and panel text
+
+- `docs/method-draft.md` (still a draft, not linked), the AI quality panel and the README limitation now describe the
+  three steps: Gemini drafts, Claude suggests statuses with written rules, Knut checks a pre-registered sample of 18.
+  Agreement is the placeholder "[x of 18]" in all three places until Knut has filled in the sheet.
+- Added to the limitations: the sample over-weights rejected rows, so it is not a direct estimate for all 71; and even
+  16 of 18 would give a wide 95 % interval (about 67 % to 97 %, Wilson). The 53 unsampled rows carry Claude's status only.
+- Disclosed in the method draft that this session also saw the event settings in `config/settings.yaml` (see step 4).
+- Panel metric notes changed from "used as written / changed by the controller / rewritten" to the status rules,
+  because no controller has changed them yet.
+- README first line no longer says "a controller reviews them"; it says what actually happens.
