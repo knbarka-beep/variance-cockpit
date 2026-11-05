@@ -219,3 +219,20 @@ email rewrite on the same day (see step 6) gave every commit a new hash. Date, m
   sub-row shows only the price/volume split and "vs flexed budget". Each row still opens its own draft in the drill-down.
   Counts unchanged against the live site before the change: Jun 2026 list 5, KPI 5; Sep 2026 list 6, KPI 6; panel 35/30/6.
 - `data/ai/evaluation.json` still holds an older partial v3b run (10 drafts); the README figure 16 of 71 is from the later run; the file is not shown on the dashboard.
+
+## Design P1: shared kit redesign (05.11.2026)
+
+Unattended run of `../prompts/design-p1.md`. Impeccable's interview step was not run: the prompt says "no questions",
+so the brief in the prompt stands in for the interview, and every choice is logged here.
+
+### Step 0. Before screenshots and the selectors the checks rely on
+
+- `scripts/screenshots.mjs` (new, adapted from startup-runway): `before|after` takes the comparison set into
+  `docs/screenshots/redesign/`, `qa` runs the click-through checks and retakes `docs/screenshots/`, `qa <url>` checks the live site.
+  The earlier A8/B3 QA script was never committed, so this one replaces it with the same checks.
+- Selectors and ids it relies on, kept through the redesign: `#period` (month select), buttons named "Previous month" and
+  "Next month", `.vrow` (one per list row), `dialog.drill`, `#drill-title`, "Close details", `#ai-title`, `#bridge-title`,
+  `#list-title`, `#summary-title`, and from the kit `.info-btn` / `.info-pop`.
+- BEFORE on current main (`5b62603`): all figure checks pass. Two "fails" were test bugs (upper-case CSS label; focus
+  landing on `<body>` after the last stop) and were fixed in the script. "16 of 18" fails on main as expected: the old
+  panel says "agreed with 16"; the redesign shows it as "16 of 18". Focus ring is the old bright blue `#1d4ed8`.
