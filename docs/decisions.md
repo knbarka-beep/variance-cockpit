@@ -134,3 +134,16 @@ email rewrite on the same day (see step 6) gave every commit a new hash. Date, m
   `git log --all --format='%ae %ce' | sort -u` shows only `299253900+knbarka-beep@users.noreply.github.com`. 0 hits for
   the old address and 0 for "Ria" as a word, in tracked files and in the full history. No absolute personal paths in tracked
   files. No key or token patterns (Google `AIza`, `sk-`, `sk-ant`, `ghp_`, `api_key=`) and no `.env` file in any commit.
+
+## Prompt B, A5. README, final pass
+
+- Rewritten in the order of the brief. About 1.040 words counting the code block and link syntax; under 1.000 in prose.
+- Every number checked against the files: 2.120 ledger lines (`gl_transactions.csv`), 71 material variances, 7 checks,
+  v3a 12 of 15, 5 of 55, 71 of 71, 70 of 71 within 60 words, 1 sign error (`evaluation.json`); v1 10 and v2 13 of 15;
+  v3b 16 of 71 (the earlier README; `evaluation.json` still holds an older v3b run of 10 drafts, not rerun); review 35/30/6
+  and 16 of 18 (`reviews.csv`, A1); Sep 2026 EBITDA 0,25m against 1,55m (`kpis.json`).
+- The README says "material variance", the project's own term, instead of "significant", which is on the style ban list.
+  The dashboard still says "Significant variances"; not changed, to keep this a text-only step.
+- Removed the step-by-step command blocks for the review scripts and the session list; they are in `docs/ai-layer.md`
+  and the git history. Kept a short build block. Kept every limitation; added "one run per prompt version".
+- The screenshot path `docs/screenshots/desktop-light.png` is created in A8.
