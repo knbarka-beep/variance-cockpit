@@ -71,3 +71,16 @@ dialog.drill::backdrop { background: rgb(20 20 18 / 0.35); }
 
 /* Phone: the header controls move under the title instead of running off the screen. */
 @media (max-width: 480px) { .site-header > div { flex-wrap: wrap; } }
+
+/* How this works (/method): about 70 characters per line (55ch, since a Plex "0" is wider than the average letter),
+   serif headings, lists Tailwind's reset leaves bare. */
+.method { max-width: 55ch; }
+.method h1 { font-family: var(--font-serif); font-weight: 600; font-size: 2rem; line-height: 1.2; margin: 1rem 0 1.25rem; }
+.method h2 { font-family: var(--font-serif); font-weight: 600; font-size: 1.3rem; line-height: 1.3; margin: 2.25rem 0 0.6rem; scroll-margin-top: 64px; }
+.method p, .method ul, .method ol { margin: 0 0 0.85rem; }
+.method ul, .method ol { padding-left: 1.25rem; }
+.method ul { list-style: disc; }
+.method ol { list-style: decimal; }
+.method li { margin-bottom: 0.35rem; }
+.method li::marker { color: var(--muted); }
+.method code { font-size: 0.88em; background: var(--surface-2); border-radius: 3px; padding: 0 4px; }

@@ -302,3 +302,20 @@ so the brief in the prompt stands in for the interview, and every choice is logg
   no console errors).
 - Compare images: `docs/screenshots/redesign/compare-*.png`. `web/public/og.png` recropped (1200 x 630) from `desktop-light-after.png`.
 - `docs/screenshots/focus-drilldown.png` removed: not referenced anywhere and it showed the old design.
+
+## How this works page (/method)
+
+- `/method/` is rendered at build time from `docs/method-draft.md`, so there is one text, not two. `prepare-data.mjs` copies it
+  to `web/lib/method.md` (committed, like `dashboard.json`, so the Vercel build from `web/` works); `app/method/page.tsx` turns
+  the small Markdown subset it uses (headings, paragraphs, lists, bold, code) into HTML in about 20 lines. No Markdown library
+  was added; the comment in the page names the upgrade if the doc ever needs tables or links.
+- Every fact is kept. Wording only: the title is now "How this works", and "material variance" became "significant variance"
+  (four places), the dashboard's term since prompt B; "Materiality" is now the "Significant variances" section.
+- Styling: kit tokens, serif headings, 55ch column. 55ch, not 70ch: a Plex "0" is wider than an average letter, so 70ch gave
+  about 90 characters per line; 55ch measures 72 per line in the QA script.
+- The footer moved from the dashboard into `app/layout.tsx`, so the dashboard, `/method/` and the 404 page share it. Its GitHub
+  "Method and limitations" link became "How this works" (`/method/`); the AI quality panel links to `/method/#review` after
+  "agreed with 16 of 18". `trailingSlash: true` writes `method/index.html`, so any static server finds `/method/`.
+- Checks: `build_db.py` (all checks pass), `check_suggestions.py` (71, 0 failed), `check_month_summaries.py` (24), both Python test
+  files, `npm test` (4), `tsc`, `eslint`, `npm run build`: all pass; `dashboard.json` unchanged. `screenshots.mjs qa`: 26 of 26,
+  including three new checks (links from footer and AI panel, "(fictional)" and the full review section on `/method/`, reading width).

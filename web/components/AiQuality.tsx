@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { data } from "@/lib/data";
 import { Card, CardHeader } from "./kit/Card";
 import { InfoTip } from "./kit/InfoTip";
@@ -42,7 +43,8 @@ export default function AiQuality() {
         <span>
           Gemini wrote the drafts and Claude suggested each status. Knut checked a random sample:{" "}
           <b className="font-semibold text-text">agreed with 16 of 18</b>.
-          {count(null) > 0 && ` ${count(null)} not reviewed yet.`}
+          {count(null) > 0 && ` ${count(null)} not reviewed yet.`}{" "}
+          <Link href="/method/#review">How this works</Link>
         </span>
         <InfoTip label="how the drafts were reviewed" align="right">
           <p>How the drafts were reviewed: Gemini wrote them. Claude, a different model, suggested each status using written

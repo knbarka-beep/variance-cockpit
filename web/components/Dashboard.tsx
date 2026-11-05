@@ -75,18 +75,6 @@ export default function Dashboard() {
         <Drilldown id={selected} onClose={() => setSelected(null)} />
       </main>
 
-      <footer className="mx-auto mt-4 mb-8 grid max-w-[1200px] gap-2 border-t border-border px-4 pt-4 text-xs text-muted">
-        <p>
-          Significant variance: at least {meta.materiality.min_pct.toLocaleString("da-DK")} % and DKK{" "}
-          {meta.materiality.min_amount_dkk.toLocaleString("da-DK")} from budget, per account, cost centre and month.
-          AI comments are drafts written once and stored; this page never calls an AI model.
-        </p>
-        <p className="flex flex-wrap gap-x-5 gap-y-1">
-          <span>{meta.company_name}: all data is synthetic</span>
-          <a href="https://github.com/knbarka-beep/variance-cockpit/blob/main/docs/method-draft.md">Method and limitations</a>
-          <a href="https://github.com/knbarka-beep/variance-cockpit">Code on GitHub</a>
-        </p>
-      </footer>
     </>
   );
 }

@@ -1,4 +1,4 @@
-# Method
+# How this works
 
 ## The data
 
@@ -8,9 +8,9 @@ A Python script builds a monthly budget per account, then the actuals: budget pl
 
 Six business events are planted on top: a price increase, a customer buying less, an invoice booked in the wrong month and corrected later, a one-off repair, extra staff costs, and an overspend with no clear cause. The ledger texts look like normal bookkeeping. An answer key records the events; only the evaluation script reads it.
 
-## Materiality
+## Significant variances
 
-A variance is material when it is at least 5 % of budget and at least DKK 50.000, per account, cost centre and month. The percentage stops large accounts from flagging small noise; the amount stops small accounts from flagging trivial sums. A normal month then has a few material variances, which a controller can actually read.
+A variance is significant when it is at least 5 % of budget and at least DKK 50.000, per account, cost centre and month. The percentage stops large accounts from flagging small noise; the amount stops small accounts from flagging trivial sums. A normal month then has a few significant variances, which a controller can actually read.
 
 ## Flexed budget for raw materials
 
@@ -18,7 +18,7 @@ When sales volume falls, raw material costs fall with it, and a price increase c
 
 ## The AI layer
 
-For each material variance the model (Gemini) receives the actual, budget and variance, the largest ledger lines, each supplier's or customer's change against its own three-month average (raw materials use the flexed budget instead), and the three previous months. It never sees later months: at month-end close the future does not exist. It returns a short comment, a cause category and a view on persistence.
+For each significant variance the model (Gemini) receives the actual, budget and variance, the largest ledger lines, each supplier's or customer's change against its own three-month average (raw materials use the flexed budget instead), and the three previous months. It never sees later months: at month-end close the future does not exist. It returns a short comment, a cause category and a view on persistence.
 
 A check without AI compares every figure in the comment with the input. All drafts are written in advance and stored; the dashboard never calls the AI.
 

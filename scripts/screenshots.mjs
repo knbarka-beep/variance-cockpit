@@ -9,7 +9,7 @@
 // Edge is driven through its DevTools protocol (a WebSocket built into Node): no extra packages.
 // Selectors the script relies on (keep them when the page changes): #period, buttons named
 // "Previous month" / "Next month", .vrow, dialog.drill, #drill-title, "Close details", #ai-title,
-// #bridge-title, #list-title, #summary-title, .info-btn, .info-pop.
+// #bridge-title, #list-title, #summary-title, .info-btn, .info-pop, .method (the /method/ page).
 import { spawn } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
@@ -69,16 +69,16 @@ async function connect() {
 
 let current = { width: 1440, mobile: false };
 // The theme is stored before the page loads, so it works with both the old and the new theme script.
-async function open(theme, width, mobile = false) {
+async function open(theme, width, mobile = false, path = "/") {
   current = { width, mobile };
   await send("Emulation.setDeviceMetricsOverride", { width, height: mobile ? 900 : 1600, deviceScaleFactor: 1, mobile });
   await send("Emulation.setTouchEmulationEnabled", { enabled: mobile, maxTouchPoints: 5 });
   await send("Page.navigate", { url: SITE + "/" });
   await wait(300);
   await js(`localStorage.setItem("theme", ${JSON.stringify(theme)})`);
-  await send("Page.navigate", { url: SITE + "/" });
+  await send("Page.navigate", { url: SITE + path });
   for (let i = 0; i < 150; i++) {
-    if (await js("document.readyState === 'complete' && !!document.getElementById('period')")) break;
+    if (await js("document.readyState === 'complete' && !!document.querySelector('#period, .method')")) break;
     await wait(100);
   }
   await wait(1200);   // hydrate, measure charts, finish the one-time chart animation
@@ -191,6 +191,20 @@ try {
     if ((await text()).toLowerCase().includes("not reviewed")) notReviewed++;
   }
   report(notReviewed === 0, `no "not reviewed" in any month (${notReviewed} months with it)`);
+
+  console.log("How this works (/method/):");
+  const links = await js(`[...document.querySelectorAll('footer a'), ...${AI_CARD}.querySelectorAll('a')].filter(a => a.textContent.trim() === 'How this works').map(a => a.getAttribute('href'))`);
+  report(links.includes("/method/") && links.includes("/method/#review"), `linked from the footer and the AI quality panel (${links.join(", ")})`);
+  await open("light", 1440, false, "/method/#review");
+  const m = await js("document.body.innerText");
+  report(m.includes("(fictional)") && /How this works/.test(m) && m.includes("16 of 18") && m.includes("b176b87"),
+    'loads, shows "(fictional)", the full review section ("16 of 18", commit b176b87)');
+  // Characters per line: the column width divided by the average width of a character in the real body text.
+  const measure = await js(`(() => { const p = document.querySelector('.method p'); const s = document.createElement('span');
+    s.style.whiteSpace = 'nowrap'; s.textContent = p.textContent; p.append(s); const w = s.getBoundingClientRect().width / s.textContent.length; s.remove();
+    return Math.round(document.querySelector('.method').getBoundingClientRect().width / w); })()`);
+  report(measure >= 60 && measure <= 85, `reading width about 70 characters (${measure} per line)`);
+  if (!live) await shoot("method-light.png");
 
   console.log("Keyboard:");
   await open("light", 1440);

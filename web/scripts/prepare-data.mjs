@@ -1,7 +1,7 @@
-// Copies the fields the dashboard needs from ../data/export into lib/dashboard.json.
+// Copies the fields the dashboard needs from ../data/export into lib/dashboard.json, and docs/method-draft.md into lib/method.md.
 // AI quality: only the aggregate scores for the drafts shown, never which variances are planted events.
 // On Vercel (root directory web/) ../data is not there: the committed lib/dashboard.json is used as it is.
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 
 if (!existsSync(new URL("../../data/export/meta.json", import.meta.url))) {
   console.log("../data/export not found: using the committed lib/dashboard.json");
@@ -52,4 +52,6 @@ const data = {
   },
 };
 writeFileSync(new URL("../lib/dashboard.json", import.meta.url), JSON.stringify(data));
+// The "How this works" page (/method) is rendered from the same text as docs/method-draft.md.
+copyFileSync(new URL("../../docs/method-draft.md", import.meta.url), new URL("../lib/method.md", import.meta.url));
 console.log(`lib/dashboard.json: ${data.variances.length} variances, AI ${data.aiQuality?.version ?? "no evaluation"}`);
