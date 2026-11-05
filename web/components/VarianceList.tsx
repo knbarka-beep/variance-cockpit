@@ -1,5 +1,6 @@
 import { data, type Variance } from "@/lib/data";
 import { label, materialsSplit, millions, pct } from "@/lib/format";
+import { Card, CardHeader } from "./kit/Card";
 
 type Props = {
   significant: { top: Variance[]; subRows: Map<string, Variance> };
@@ -28,20 +29,18 @@ function Row({ v, onSelect, sub, hasSub }: { v: Variance; onSelect: (id: string)
   const name = `${v.account_no} ${v.account_name}${v.variance_type === "price" ? " (price effect)" : ""}`;
   return (
     <li className={sub ? "subrow" : undefined}>
-      <button className="vrow" onClick={() => onSelect(v.variance_id)} aria-label={`${name}, ${v.cost_centre}: open details`}>
+      <button type="button" className="vrow" onClick={() => onSelect(v.variance_id)} aria-label={`${name}, ${v.cost_centre}: open details`}>
         <span className="line">
-          <span className="name">{name}</span>
-          <span className={`num ${v.favourable ? "fav" : "unfav"}`}>
-            <span aria-hidden="true">{v.favourable ? "▲" : "▼"}</span> {millions(v.variance_profit_dkk)}
-          </span>
+          <span className="font-medium">{name}</span>
+          <span className={`num font-semibold ${v.favourable ? "fav" : "unfav"}`}>{millions(v.variance_profit_dkk)}</span>
         </span>
-        <span className="line small muted">
+        <span className="line t-small text-muted">
           <span>{v.cost_centre} · {v.favourable ? "favourable" : "unfavourable"}</span>
           <span className="num">{pct(v.variance_pct)}{v.variance_type === "price" ? " vs flexed budget" : ""}</span>
         </span>
-        {split && <span className="small">{split}</span>}
+        {split && <span className="t-small">{split}</span>}
         {!sub && (
-          <span className="small muted">
+          <span className="t-small text-muted">
             AI: {v.ai_cause_category ? label(v.ai_cause_category) : "No draft"} · <span className="status">{statusText(v)}</span>
           </span>
         )}
@@ -53,15 +52,13 @@ function Row({ v, onSelect, sub, hasSub }: { v: Variance; onSelect: (id: string)
 export default function VarianceList({ significant, group, onClearGroup, onSelect }: Props) {
   const shown = significant.top.filter((v) => !group || v.pl_group === group);
   return (
-    <section className="card" aria-labelledby="list-title">
-      <div className="section-head">
-        <h2 id="list-title">Significant variances ({significant.top.length})</h2>
-        {group ? (
-          <button className="chip" onClick={onClearGroup}>{group} ✕ <span className="sr-only">clear filter</span></button>
-        ) : <p className="muted small">Largest first</p>}
-      </div>
+    <Card aria-labelledby="list-title">
+      <CardHeader id="list-title" title={`Significant variances (${significant.top.length})`}
+        aside={group ? (
+          <button type="button" className="btn" onClick={onClearGroup}>{group} only · show all</button>
+        ) : "Largest first"} />
       {shown.length === 0 ? (
-        <p className="muted">{group ? `No significant variances in ${group} this month.` : "No significant variances this month."}</p>
+        <p className="text-muted">{group ? `No significant variances in ${group} this month.` : "No significant variances this month."}</p>
       ) : (
         <ul className="vlist">
           {shown.map((v) => [
@@ -72,6 +69,6 @@ export default function VarianceList({ significant, group, onClearGroup, onSelec
           ])}
         </ul>
       )}
-    </section>
+    </Card>
   );
 }

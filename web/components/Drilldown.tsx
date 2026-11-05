@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { data } from "@/lib/data";
 import { amount, label, last12, millions, monthLabel, pct } from "@/lib/format";
 import ChartTooltip from "./ChartTooltip";
@@ -40,67 +40,70 @@ export default function Drilldown({ id, onClose }: { id: string | null; onClose:
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       {v && (
         <>
-          <div className="drill-head">
+          <div className="sticky top-0 z-10 flex items-start justify-between gap-3 border-b border-border bg-surface px-5 py-4">
             <div>
-              <h2 id="drill-title">{v.account_no} {v.account_name}{v.variance_type === "price" ? " (price effect)" : ""}</h2>
-              <p className="muted small">{v.cost_centre} · {monthLabel(v.period)}</p>
+              <h2 id="drill-title" className="t-section">{v.account_no} {v.account_name}{v.variance_type === "price" ? " (price effect)" : ""}</h2>
+              <p className="t-small text-muted">{v.cost_centre} · {monthLabel(v.period)}</p>
             </div>
-            <button className="iconbtn" onClick={onClose} aria-label="Close details">✕</button>
+            <button type="button" className="btn icon" onClick={onClose} aria-label="Close details">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" /></svg>
+            </button>
           </div>
-          <div className="drill-body">
-            <div className="facts">
-              <span>Actual <b>{millions(v.actual_dkk)}</b></span>
-              <span>{base} <b>{millions(v.flexed_budget_dkk ?? v.budget_dkk)}</b></span>
-              <span className={v.favourable ? "fav" : "unfav"}>
-                <b>{millions(v.variance_profit_dkk)} {v.favourable ? "favourable" : "unfavourable"}</b> ({pct(v.variance_pct)})
-              </span>
-            </div>
-            {split && <p>{split} The bridge shows all cost of materials together, including packaging.</p>}
+          <div className="grid gap-6 px-5 py-5">
+            <dl className="grid grid-cols-3 gap-4">
+              <div><dt className="t-label">Actual</dt><dd className="mt-1 text-lg font-semibold">{millions(v.actual_dkk)}</dd></div>
+              <div><dt className="t-label">{base}</dt><dd className="mt-1 text-lg font-semibold">{millions(v.flexed_budget_dkk ?? v.budget_dkk)}</dd></div>
+              <div><dt className="t-label">Variance</dt>
+                <dd className={`mt-1 text-lg font-semibold ${v.favourable ? "fav" : "unfav"}`}>{millions(v.variance_profit_dkk)}</dd>
+                <dd className={`t-small ${v.favourable ? "fav" : "unfav"}`}>{v.favourable ? "favourable" : "unfavourable"} ({pct(v.variance_pct)})</dd></div>
+            </dl>
+            {split && <p className="t-small">{split} The bridge shows all cost of materials together, including packaging.</p>}
 
             <div>
-              <h3>Last 12 months, actual vs {base.toLowerCase()}</h3>
+              <h3 className="t-label mb-2">Last 12 months, actual vs {base.toLowerCase()}</h3>
               <div style={{ height: 160 }} role="img" aria-label={`Actual (solid) and ${base.toLowerCase()} (dashed) for this account, last 12 months`}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={trend} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
-                    <XAxis dataKey="period" tickFormatter={(p: string) => p.slice(0, 3)} tick={{ fill: "var(--muted)", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "var(--border)" }} />
+                  <LineChart data={trend} margin={{ top: 8, right: 8, bottom: 0, left: 0 }} accessibilityLayer={false}>
+                    <CartesianGrid stroke="var(--grid)" vertical={false} />
+                    <XAxis dataKey="period" tickFormatter={(p: string) => p.slice(0, 3)} tick={{ fill: "var(--muted)", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "var(--border-strong)" }} />
                     <YAxis tickFormatter={(x: number) => `${(x / 1e6).toFixed(1).replace(".", ",")}m`} tick={{ fill: "var(--muted)", fontSize: 11 }} width={40} axisLine={false} tickLine={false} />
-                    <Tooltip cursor={{ stroke: "var(--border)" }} content={<ChartTooltip<Point> render={trendTip} />} />
-                    <Line dataKey="budget" stroke="var(--budget)" strokeDasharray="3 3" dot={false} activeDot={{ r: 3, fill: "var(--budget)", stroke: "var(--surface)" }} isAnimationActive={false} />
-                    <Line dataKey="actual" stroke="var(--accent)" strokeWidth={2} dot={{ r: 2, fill: "var(--accent)", stroke: "var(--accent)" }} activeDot={{ r: 4, fill: "var(--accent)", stroke: "var(--surface)" }} isAnimationActive={false} />
+                    <Tooltip cursor={{ stroke: "var(--border-strong)" }} isAnimationActive={false} content={<ChartTooltip<Point> render={trendTip} />} />
+                    <Line dataKey="budget" stroke="var(--neutral)" strokeWidth={1.25} strokeDasharray="3 3" dot={false} activeDot={{ r: 3, fill: "var(--neutral)", stroke: "var(--surface)" }} isAnimationActive={false} />
+                    <Line dataKey="actual" stroke="var(--accent)" strokeWidth={1.75} dot={{ r: 2, fill: "var(--accent)", stroke: "var(--accent)" }} activeDot={{ r: 4, fill: "var(--accent)", stroke: "var(--surface)" }} isAnimationActive={false} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
             <div>
-              <h3>AI draft</h3>
+              <h3 className="t-label">AI draft</h3>
               {v.ai_comment ? (
                 <>
-                  <p className="quote" style={{ marginTop: 8 }}>{v.ai_comment}</p>
-                  <p className="small muted" style={{ marginTop: 4 }}>
+                  <p className="quote mt-2">{v.ai_comment}</p>
+                  <p className="t-small mt-1.5 text-muted">
                     Cause: {label(v.ai_cause_category)} · Persistence: {label(v.ai_persistence)} · Figure check:{" "}
                     {v.figure_check_passed ? "all figures found in the data" : "figures to check"} · {v.ai_model}, prompt {v.ai_prompt_version}
                   </p>
                 </>
-              ) : <p className="muted">No AI draft for this variance.</p>}
+              ) : <p className="mt-2 text-muted">No AI draft for this variance.</p>}
             </div>
 
             <div>
-              <h3>Review</h3>
-              <p style={{ marginTop: 8 }}><b>{statusText(v)}</b></p>
-              {v.final_comment && <p className="quote" style={{ marginTop: 4 }}>{v.final_comment}</p>}
-              {v.reviewer_note && <p className="small muted">Note: {v.reviewer_note}</p>}
+              <h3 className="t-label">Review</h3>
+              <p className="mt-2 font-semibold">{statusText(v)}</p>
+              {v.final_comment && <p className="quote mt-2">{v.final_comment}</p>}
+              {v.reviewer_note && <p className="t-small mt-1.5 text-muted">Note: {v.reviewer_note}</p>}
             </div>
 
             <div>
-              <h3>Transactions ({lines.length})</h3>
-              <div className="tablewrap">
-                <table>
+              <h3 className="t-label mb-1">Transactions ({lines.length})</h3>
+              <div className="overflow-x-auto">
+                <table className="data-table">
                   <thead><tr><th>Date</th><th>Counterparty</th><th className="desc-col">Description</th><th className="num">DKK</th></tr></thead>
                   <tbody>
                     {lines.map((t, i) => (
                       <tr key={i}>
-                        <td className="nowrap">{t.posting_date.slice(8, 10)}.{t.posting_date.slice(5, 7)}</td>
+                        <td className="whitespace-nowrap">{t.posting_date.slice(8, 10)}.{t.posting_date.slice(5, 7)}</td>
                         <td>{t.counterparty ?? "–"}<span className="desc-inline">{t.description}</span></td>
                         <td className="desc-col">{t.description}</td><td className="num">{amount(t.amount_dkk)}</td></tr>
                     ))}

@@ -2,14 +2,19 @@
 import { useState } from "react";
 import { data } from "@/lib/data";
 import { groupSignificant, monthLabel } from "@/lib/format";
-import KpiRow from "./KpiRow";
+import Hero from "./Hero";
 import Bridge from "./Bridge";
 import VarianceList from "./VarianceList";
 import Drilldown from "./Drilldown";
 import AiQuality from "./AiQuality";
-import ThemeToggle from "./ThemeToggle";
+import { InfoTip } from "./kit/InfoTip";
+import { PageHeader } from "./kit/PageHeader";
+import { ThemeToggle } from "./kit/ThemeToggle";
 
 const DEFAULT_PERIOD = "2026-09";
+const Chevron = ({ d }: { d: string }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
+);
 
 export default function Dashboard() {
   const { meta } = data;
@@ -24,52 +29,64 @@ export default function Dashboard() {
   const i = meta.periods.indexOf(period);
   const summary = data.monthSummaries[period];
   const go = (p: string) => { setPeriod(p); setGroup(null); };
+  // The company name already ends in "(fictional)"; the header shows it in two weights.
+  const company = meta.company_name.replace(/ \(fictional\)$/, "");
 
   return (
-    <div className="page">
-      <header className="header">
-        <div>
-          <h1>Variance Cockpit</h1>
-          <p className="muted small">{meta.company_name} · month-end close, budget vs actual</p>
+    <>
+      <PageHeader title="Variance Cockpit" suffix={`· ${company} (fictional)`}>
+        <button type="button" className="btn icon" aria-label="Previous month" disabled={i <= 0} onClick={() => go(meta.periods[i - 1])}>
+          <Chevron d="M10 3.5 5.5 8l4.5 4.5" />
+        </button>
+        <label className="sr-only" htmlFor="period">Month</label>
+        <select id="period" value={period} onChange={(e) => go(e.target.value)}>
+          {meta.periods.map((p) => <option key={p} value={p}>{monthLabel(p)}</option>)}
+        </select>
+        <button type="button" className="btn icon" aria-label="Next month" disabled={i >= meta.periods.length - 1} onClick={() => go(meta.periods[i + 1])}>
+          <Chevron d="M6 3.5 10.5 8 6 12.5" />
+        </button>
+        <ThemeToggle />
+      </PageHeader>
+
+      <main className="mx-auto grid max-w-[1200px] gap-8 px-4 pt-6 pb-4">
+        <div className="t-small flex items-center gap-1.5 text-muted" role="note">
+          <span>Month-end close, budget vs actual. All company data on this page is synthetic.</span>
+          <InfoTip label="the synthetic data">
+            <p>Synthetic data. The company, its customers and suppliers are fictional; any resemblance to real companies is coincidental.</p>
+          </InfoTip>
         </div>
-        <div className="controls">
-          <button className="iconbtn" aria-label="Previous month" disabled={i <= 0} onClick={() => go(meta.periods[i - 1])}>‹</button>
-          <label className="sr-only" htmlFor="period">Month</label>
-          <select id="period" value={period} onChange={(e) => go(e.target.value)}>
-            {meta.periods.map((p) => <option key={p} value={p}>{monthLabel(p)}</option>)}
-          </select>
-          <button className="iconbtn" aria-label="Next month" disabled={i >= meta.periods.length - 1} onClick={() => go(meta.periods[i + 1])}>›</button>
-          <ThemeToggle />
+
+        <Hero period={period} significant={significant} />
+
+        {summary && (
+          <section aria-labelledby="summary-title" className="grid gap-x-12 gap-y-1 border-y border-border py-4 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+            <h2 id="summary-title" className="t-label pt-0.5">{summary.author === "claude-draft" ? "Draft summary (Claude)" : "Controller's summary"}</h2>
+            <p className="max-w-[75ch]">{summary.text}</p>
+          </section>
+        )}
+
+        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+          <Bridge period={period} group={group} onGroup={setGroup} />
+          <VarianceList significant={significant} group={group} onClearGroup={() => setGroup(null)} onSelect={setSelected} />
         </div>
-      </header>
-      <p className="notice" role="note">
-        Synthetic data. The company, its customers and suppliers are fictional; any resemblance to real companies is coincidental.
-      </p>
 
-      <KpiRow period={period} significant={significant} />
-      {summary && (
-        <section className="card" aria-labelledby="summary-title">
-          <h3 id="summary-title">{summary.author === "claude-draft" ? "Draft summary (Claude)" : "Controller's summary"}</h3>
-          <p className="summary" style={{ marginTop: 4 }}>{summary.text}</p>
-        </section>
-      )}
+        <AiQuality />
 
-      <div className="main">
-        <Bridge period={period} group={group} onGroup={setGroup} />
-        <VarianceList significant={significant} group={group} onClearGroup={() => setGroup(null)} onSelect={setSelected} />
-      </div>
+        <Drilldown id={selected} onClose={() => setSelected(null)} />
+      </main>
 
-      <AiQuality />
-
-      <footer>
-        Significant variance: at least {meta.materiality.min_pct.toLocaleString("da-DK")} % and DKK{" "}
-        {meta.materiality.min_amount_dkk.toLocaleString("da-DK")} from budget, per account, cost centre and month.
-        AI comments are drafts written once and stored; this page never calls an AI model.{" "}
-        <a href="https://github.com/knbarka-beep/variance-cockpit/blob/main/docs/method-draft.md">Method and limitations</a>{" · "}
-        <a href="https://github.com/knbarka-beep/variance-cockpit">Code on GitHub</a>.
+      <footer className="mx-auto mt-4 mb-8 grid max-w-[1200px] gap-2 border-t border-border px-4 pt-4 text-xs text-muted">
+        <p>
+          Significant variance: at least {meta.materiality.min_pct.toLocaleString("da-DK")} % and DKK{" "}
+          {meta.materiality.min_amount_dkk.toLocaleString("da-DK")} from budget, per account, cost centre and month.
+          AI comments are drafts written once and stored; this page never calls an AI model.
+        </p>
+        <p className="flex flex-wrap gap-x-5 gap-y-1">
+          <span>{meta.company_name}: all data is synthetic</span>
+          <a href="https://github.com/knbarka-beep/variance-cockpit/blob/main/docs/method-draft.md">Method and limitations</a>
+          <a href="https://github.com/knbarka-beep/variance-cockpit">Code on GitHub</a>
+        </p>
       </footer>
-
-      <Drilldown id={selected} onClose={() => setSelected(null)} />
-    </div>
+    </>
   );
 }

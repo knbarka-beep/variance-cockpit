@@ -2,6 +2,7 @@
 // Needs: web/out built (cd web; npm run build), Python (local web server), Node 22+.
 // Run from the repo root:
 //   node scripts/screenshots.mjs before|after   comparison shots into docs/screenshots/redesign/
+//   node scripts/screenshots.mjs compare        side-by-side images and web/public/og.png (after `after`)
 //   node scripts/screenshots.mjs qa             checks (PASS/FAIL) and the regular shots in docs/screenshots/
 //   node scripts/screenshots.mjs qa https://... the same checks against the live site (no local server)
 //
@@ -134,6 +135,37 @@ try {
     await js("document.querySelectorAll('.vrow')[1].click()");   // 2010 raw materials: has the price/volume split
     await wait(600);
     await shootViewport(`drilldown-${mode}.png`);
+    process.exit(0);
+  }
+
+  // Side-by-side BEFORE | AFTER images, and the Open Graph image cropped from the new desktop light shot.
+  // Edge draws them from the PNGs, so no image library is needed.
+  if (mode === "compare") {
+    const { readFileSync } = await import("node:fs");
+    const png = (f) => `data:image/png;base64,${readFileSync(join(shots, f)).toString("base64")}`;
+    const size = (f) => { const b = readFileSync(join(shots, f)); return [b.readUInt32BE(16), b.readUInt32BE(20)]; };
+    async function draw(html, width, height, file) {
+      await send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: false });
+      const { frameTree } = await send("Page.getFrameTree");
+      await send("Page.setDocumentContent", { frameId: frameTree.frame.id, html });
+      await wait(500);
+      const { data } = await send("Page.captureScreenshot", { format: "png", clip: { x: 0, y: 0, width, height, scale: 1 } });
+      writeFileSync(join(shots, file), Buffer.from(data, "base64"));
+      console.log(`  saved docs/screenshots/redesign/${file}`);
+    }
+    for (const name of ["desktop-light", "desktop-dark", "mobile-375", "drilldown", "ai-quality"]) {
+      const [bw, bh] = size(`${name}-before.png`), [aw, ah] = size(`${name}-after.png`);
+      const gap = 24, w = bw + aw + gap * 3, h = Math.max(bh, ah) + 64;
+      await draw(`<body style="margin:0;background:#e7e5e1;font:600 14px system-ui;color:#1c1b19">
+        <div style="display:flex;gap:${gap}px;padding:16px ${gap}px;align-items:flex-start">
+        <div><div style="margin-bottom:8px">Before</div><img src="${png(`${name}-before.png`)}"></div>
+        <div><div style="margin-bottom:8px">After</div><img src="${png(`${name}-after.png`)}"></div></div></body>`, w, h, `compare-${name}.png`);
+    }
+    // og.png: 1200 x 630 from the top of the 1440 px page, where the 1200 px content column starts at x = 120.
+    await draw(`<body style="margin:0;overflow:hidden"><img style="display:block;margin-left:-120px" src="${png("desktop-light-after.png")}"></body>`,
+      1200, 630, "og.png");
+    writeFileSync(join(root, "web", "public", "og.png"), readFileSync(join(shots, "og.png")));
+    console.log("  copied to web/public/og.png");
     process.exit(0);
   }
 
