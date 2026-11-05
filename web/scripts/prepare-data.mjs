@@ -32,7 +32,7 @@ const data = {
       "account_name", "pl_group", "cost_centre", "actual_dkk", "budget_dkk", "flexed_budget_dkk",
       "variance_profit_dkk", "variance_pct", "favourable"]),
     ...pick(comments[v.variance_id] ?? {}, ["ai_comment", "ai_cause_category", "ai_persistence",
-      "figure_check_passed", "ai_model", "ai_prompt_version", "review_status", "final_comment", "reviewer_note"]),
+      "figure_check_passed", "ai_model", "ai_prompt_version", "review_status", "final_comment", "reviewer_note", "reviewed_by"]),
   })),
   aiQuality: ev && {
     version: versions[0],

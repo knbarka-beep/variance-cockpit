@@ -6,6 +6,7 @@ columns in the workbook are there to read. reviews.csv keeps its own row order.
 Stops with an error, and changes nothing, if:
   - a status is not empty, approved, edited or rejected,
   - a row marked edited has no final_comment,
+  - reviewed_by (reviews.csv only) is not empty, claude or knut, or is filled in without a status,
   - a variance_id is blank, or a variance in reviews.csv is missing from the workbook
     (or the workbook has one that reviews.csv does not know).
 
@@ -22,6 +23,7 @@ REVIEWS = ROOT / "data" / "ai" / "reviews.csv"
 WORKBOOK = ROOT / "data" / "check" / "review.xlsx"
 COLUMNS = ["variance_id", "status", "final_comment", "reviewer_note"]
 STATUSES = {"", "approved", "edited", "rejected"}
+REVIEWERS = {"", "claude", "knut"}  # reviews.csv only: who set the status
 
 
 def check_reviews(rows):
@@ -35,6 +37,10 @@ def check_reviews(rows):
             problems.append(f"{vid}: status '{r['status']}' is not empty, approved, edited or rejected")
         if r["status"] == "edited" and not r["final_comment"]:
             problems.append(f"{vid}: status is edited but final_comment is empty")
+        if r.get("reviewed_by", "") not in REVIEWERS:
+            problems.append(f"{vid}: reviewed_by '{r['reviewed_by']}' is not empty, claude or knut")
+        if "reviewed_by" in r and bool(r["status"]) != bool(r["reviewed_by"]):
+            problems.append(f"{vid}: status and reviewed_by must both be filled in or both be empty")
     return problems
 
 
@@ -68,10 +74,10 @@ def main():
     if problems:
         sys.exit("Review NOT imported, reviews.csv unchanged:\n  " + "\n  ".join(problems))
 
-    by_id = {r["variance_id"]: r for r in rows}
+    by_id = {r["variance_id"]: r | {"reviewed_by": "knut" if r["status"] else ""} for r in rows}
     tmp = REVIEWS.with_suffix(".tmp")
     with tmp.open("w", encoding="utf-8", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=COLUMNS)
+        w = csv.DictWriter(f, fieldnames=COLUMNS + ["reviewed_by"])
         w.writeheader()
         w.writerows(by_id[vid] for vid in in_csv)
     tmp.replace(REVIEWS)

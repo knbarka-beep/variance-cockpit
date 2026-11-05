@@ -9,6 +9,10 @@ type Props = {
 };
 
 export const STATUS: Record<string, string> = { approved: "Approved", edited: "Edited", rejected: "Rejected" };
+export const REVIEWER: Record<string, string> = { claude: "suggested by Claude", knut: "checked by Knut" };
+/** "Approved (suggested by Claude)", or "Not reviewed". */
+export const statusText = (v: Variance) =>
+  v.review_status ? `${STATUS[v.review_status]}${v.reviewed_by ? ` (${REVIEWER[v.reviewed_by]})` : ""}` : "Not reviewed";
 
 /** Price/volume split for raw materials and packaging, so the list ties to the bridge. */
 export function splitFor(v: Variance) {
@@ -35,7 +39,7 @@ function Row({ v, onSelect, sub }: { v: Variance; onSelect: (id: string) => void
         </span>
         {split && <span className="small">{split}</span>}
         <span className="small muted">
-          AI: {v.ai_cause_category ? label(v.ai_cause_category) : "No draft"} · <span className="status">{v.review_status ? STATUS[v.review_status] : "Not reviewed"}</span>
+          AI: {v.ai_cause_category ? label(v.ai_cause_category) : "No draft"} · <span className="status">{statusText(v)}</span>
         </span>
       </button>
     </li>

@@ -41,3 +41,14 @@ Result: `data/check/spot_check_sample.csv`, committed alone in 23722ed
 - Ledger amounts are shown with revenue and costs as positive numbers; the variance column is profit view (+ = favourable).
 - The instruction box is one merged cell at the top; header and box are frozen together, because Excel can only freeze from the top.
 - No formulas. The script refuses to overwrite a sheet where any blue column is filled in.
+
+## 3. Claude's statuses applied as the review
+
+- Used a small new script, `scripts/apply_suggestions.py`, not `review_import.py`: the import reads the controller's own
+  columns in `review.xlsx`, which are empty, and the brief says not to touch `review.xlsx`.
+- `reviewer_note` holds Claude's "why suggested" text, so the reason is visible on the dashboard.
+- New column `reviewed_by` (`claude` / `knut` / empty). `check_reviews` (used by `build_db.py`) now also rejects any other value,
+  and a status without `reviewed_by` or the other way round. Two new cases in `test_review.py`.
+- `review_import.py` marks imported rows with a status as `knut`. Note: running it now would overwrite Claude's statuses with
+  the empty controller columns from `review.xlsx`; it is meant for a full review by Knut, not for the spot check.
+- Dashboard: status reads e.g. "Approved (suggested by Claude)" or "(checked by Knut)"; the drill-down heading is now "Review", not "Controller review".

@@ -52,7 +52,7 @@ Path("data/ai").mkdir(parents=True, exist_ok=True)
 if not Path("data/ai/drafts.json").exists():
     Path("data/ai/drafts.json").write_text("[]\n", encoding="utf-8")
 if not Path("data/ai/reviews.csv").exists():
-    Path("data/ai/reviews.csv").write_text("variance_id,status,final_comment,reviewer_note\n", encoding="utf-8")
+    Path("data/ai/reviews.csv").write_text("variance_id,status,final_comment,reviewer_note,reviewed_by\n", encoding="utf-8")
 # One summary sentence per month, written by the controller in the review (not by AI). Empty = not shown.
 if not Path("data/ai/month_summaries.csv").exists():
     Path("data/ai/month_summaries.csv").write_text("period,summary\n", encoding="utf-8")

@@ -397,13 +397,13 @@ def save(drafts, inputs):
 
 def write_reviews(variance_ids):
     """One row per variance_id. Rows that already exist are kept exactly as they are."""
-    cols = ["variance_id", "status", "final_comment", "reviewer_note"]
+    cols = ["variance_id", "status", "final_comment", "reviewer_note", "reviewed_by"]
     existing = []
     if REVIEWS.exists():
         with REVIEWS.open(encoding="utf-8", newline="") as f:
             existing = list(csv.DictReader(f))
     known = {r["variance_id"] for r in existing}
-    new = [{"variance_id": vid, "status": "", "final_comment": "", "reviewer_note": ""}
+    new = [{"variance_id": vid, "status": "", "final_comment": "", "reviewer_note": "", "reviewed_by": ""}
            for vid in variance_ids if vid not in known]
     with REVIEWS.open("w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=cols)

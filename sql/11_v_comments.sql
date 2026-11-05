@@ -19,7 +19,7 @@ SELECT * FROM read_json('data/ai/drafts.json', format = 'array', columns = {
 
 CREATE OR REPLACE TABLE ai_reviews AS
 SELECT * FROM read_csv('data/ai/reviews.csv', header = true, all_varchar = true, columns = {
-    'variance_id': 'VARCHAR', 'status': 'VARCHAR', 'final_comment': 'VARCHAR', 'reviewer_note': 'VARCHAR'});
+    'variance_id': 'VARCHAR', 'status': 'VARCHAR', 'final_comment': 'VARCHAR', 'reviewer_note': 'VARCHAR', 'reviewed_by': 'VARCHAR'});
 
 CREATE OR REPLACE VIEW v_comments AS
 SELECT
@@ -43,7 +43,8 @@ SELECT
     d.created_at                    AS ai_created_at,
     NULLIF(r.status, '')            AS review_status,
     NULLIF(r.final_comment, '')     AS final_comment,
-    NULLIF(r.reviewer_note, '')     AS reviewer_note
+    NULLIF(r.reviewer_note, '')     AS reviewer_note,
+    NULLIF(r.reviewed_by, '')       AS reviewed_by      -- claude = Claude's suggested status; knut = checked by Knut
 FROM v_material_variances m
 LEFT JOIN ai_drafts d  ON d.variance_id = m.variance_id
 LEFT JOIN ai_reviews r ON r.variance_id = m.variance_id;

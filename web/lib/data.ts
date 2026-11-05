@@ -28,6 +28,7 @@ export type Variance = {
   ai_comment?: string; ai_cause_category?: string; ai_persistence?: string; figure_check_passed?: boolean;
   ai_model?: string; ai_prompt_version?: string;
   review_status?: string | null; final_comment?: string | null; reviewer_note?: string | null;
+  reviewed_by?: "claude" | "knut" | null; // claude = suggested by Claude (another model); knut = checked by Knut
 };
 export type AiQuality = {
   version: string; models: string[]; drafts: number; figure_check_passed: number;

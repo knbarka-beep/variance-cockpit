@@ -4,7 +4,7 @@ import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "rec
 import { data } from "@/lib/data";
 import { amount, label, last12, millions, monthLabel, pct } from "@/lib/format";
 import ChartTooltip from "./ChartTooltip";
-import { STATUS, splitFor } from "./VarianceList";
+import { splitFor, statusText } from "./VarianceList";
 
 type Point = { period: string; actual?: number; budget?: number; base: string };
 const trendTip = (p: Point) => ({ title: p.period, rows: [
@@ -86,8 +86,8 @@ export default function Drilldown({ id, onClose }: { id: string | null; onClose:
             </div>
 
             <div>
-              <h3>Controller review</h3>
-              <p style={{ marginTop: 8 }}><b>{v.review_status ? STATUS[v.review_status] : "Not reviewed yet"}</b></p>
+              <h3>Review</h3>
+              <p style={{ marginTop: 8 }}><b>{statusText(v)}</b></p>
               {v.final_comment && <p className="quote" style={{ marginTop: 4 }}>{v.final_comment}</p>}
               {v.reviewer_note && <p className="small muted">Note: {v.reviewer_note}</p>}
             </div>
