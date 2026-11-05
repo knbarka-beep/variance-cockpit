@@ -29,3 +29,15 @@ Result: `data/check/spot_check_sample.csv`, committed alone in 23722ed
 - If agreement is below 14 of 18, the dashboard says so plainly, and the project is not deployed until it has
   been discussed in the project chat.
 - The 53 rows outside the sample keep Claude's status with `reviewed_by = claude`, and the dashboard says so.
+
+## 2. Spot-check sheet
+
+- New script `scripts/spot_check_export.py` writes `data/check/spot_check.xlsx` (gitignored with the rest of `data/check/`).
+  It reuses `build_input` from `draft_comments.py`, so Knut sees the same numbers the AI saw, and the same guard against `data/truth/`.
+- Rows are sorted by variance id (period first), not grouped by Claude's status, so the order follows the calendar.
+- Added two columns beyond the brief: each counterparty's amount against its own 3-month average (top 3), and the
+  previous three months' variance. Without them the rows about "third month in a row" or "Nordvik invoiced less than in June"
+  cannot be checked from five ledger lines alone.
+- Ledger amounts are shown with revenue and costs as positive numbers; the variance column is profit view (+ = favourable).
+- The instruction box is one merged cell at the top; header and box are frozen together, because Excel can only freeze from the top.
+- No formulas. The script refuses to overwrite a sheet where any blue column is filled in.
