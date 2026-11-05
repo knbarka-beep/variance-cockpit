@@ -147,3 +147,12 @@ email rewrite on the same day (see step 6) gave every commit a new hash. Date, m
 - Removed the step-by-step command blocks for the review scripts and the session list; they are in `docs/ai-layer.md`
   and the git history. Kept a short build block. Kept every limitation; added "one run per prompt version".
 - The screenshot path `docs/screenshots/desktop-light.png` is created in A8.
+
+## Prompt B, A6. Case sheet
+
+- `docs/case-sheet.md`, about 330 words, linked from the README.
+- The brief's "marketing 41 % over budget" figure is not in the repo or its history (only the fix is: monthly swings
+  centred per fiscal year, `docs/data-spec.md`). The case sheet describes the finding without the number. Knut can add it
+  if he has the figure from his own Excel check.
+- September drivers are taken from `v_material_variances` and the bridge: revenue 0,51m, raw materials price 0,37m,
+  temporary staff, overtime and the repair invoice.

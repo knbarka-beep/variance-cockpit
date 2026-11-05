@@ -61,7 +61,7 @@ Three checks follow:
 - **The scores measure categories, not writing quality.** The month summaries are drafts by Claude. Their figures are checked, but not whether "over" or "under" is right; that was checked by hand.
 - **Only tested on synthetic data.** It cannot see causes outside the ledger, or tell price from usage on raw materials.
 
-More in the [method page](docs/method-draft.md) and the [case sheet](docs/case-sheet.md).
+More in the [method page](docs/method-draft.md). A one-page summary is in the [case sheet](docs/case-sheet.md).
 
 ## Next version
 
