@@ -2,7 +2,7 @@
 
 A month-end close dashboard for budget against actual, where AI drafts a comment on each significant variance and the drafts are reviewed.
 
-**Live:** [LIVE_URL] (static site, no login)
+**Live:** [variance-cockpit.vercel.app](https://variance-cockpit.vercel.app) (static site, no login)
 
 > **All data is synthetic.** Odense Demo Manufacturing ApS and all its customers and suppliers are fictional. Any resemblance to real companies is coincidental.
 

@@ -196,3 +196,15 @@ email rewrite on the same day (see step 6) gave every commit a new hash. Date, m
 - Case sheet: marketing about 41 % over budget in FY2025 from a random draw, fixed by centring the noise per year. The 41 %
   comes from Knut's manual Excel check on 01.11.2026, on the data set before the fix. It is not reproducible from the
   current data, which was regenerated after the fix.
+
+## Prompt B, Part B. GitHub and Vercel
+
+- B1: rewritten `main` force-pushed with `--force-with-lease` against the old `ddb1508`; repo made public with a one-line
+  description. It had been private, so the old history with the personal email was never public.
+- B2: Claude's Vercel connector had no access to the `senor-robot` team (403), so the Vercel CLI was used:
+  `project add`, root directory `web` and framework `nextjs` set through `vercel api`, `vercel link`, `vercel git connect`.
+  The production deploy came from a push to `main`, which also proves that later pushes deploy automatically.
+  Other projects in the team were not touched. `vercel link` created `.env.local` with a short-lived OIDC token; it is
+  gitignored by `.env*`.
+- B3: live site checked in headless Edge with the same QA script as A8: 17 of 17 pass, including all B3 items.
+- B4: live link at the top of the README and as the repo's website.
