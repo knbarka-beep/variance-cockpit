@@ -156,3 +156,9 @@ email rewrite on the same day (see step 6) gave every commit a new hash. Date, m
   if he has the figure from his own Excel check.
 - September drivers are taken from `v_material_variances` and the bridge: revenue 0,51m, raw materials price 0,37m,
   temporary staff, overtime and the repair invoice.
+
+## Prompt B, A7. Private drafts
+
+- `private/cv-line.md` (three lines, 23 to 25 words) and `private/pitch.md` (English 83 words, Danish 74, spoken 75)
+  written; both gitignored, not committed. No video script. Skill levels not upgraded: the CV lines say what was built,
+  not how well Knut knows Python or SQL.
