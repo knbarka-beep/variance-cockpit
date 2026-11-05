@@ -32,10 +32,12 @@ export default function AiQuality() {
       </div>
       <p className="small" style={{ marginTop: 12 }}>
         How the drafts were reviewed: Gemini wrote them. Claude, a different model, suggested each status using written
-        rules. Knut checked a pre-registered random sample of 18:
-        agreement [x of 18]{byKnut > 0 && <> ({byKnut} rows now show Knut&apos;s verdict)</>}. The review is not blind: Claude saw the drafts and the ledger, and read the table of planted
-        events only after writing its suggestions. One model grading another is not the same as human review, and 18 is a
-        small sample.
+        rules. Knut checked a pre-registered random sample of 18 and agreed with 16 ({byKnut} rows now show Knut&apos;s
+        verdict). One disagreement went each way. Feb 2025, repairs: Claude approved a draft that missed an offsetting
+        supplier, and Knut edited it. Sep 2026, temporary staff: Claude marked a correct draft as edited for spelling, and Knut
+        approved it. 18 cases are too few to say whether Claude leans either way. The review is not blind: Claude saw the
+        drafts and the ledger, and read the table of planted events only after writing its suggestions. One model grading
+        another is not the same as human review.
       </p>
       <p className="muted small" style={{ marginTop: 8 }}>
         Planted events are causes built into the synthetic data on purpose; the score is checked automatically

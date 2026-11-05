@@ -39,12 +39,19 @@ This is one run. The model does not answer the same way every time, so another r
 Three steps, by three different reviewers:
 
 1. **Gemini wrote the drafts** (v3a, `gemini-3.5-flash-lite`).
-2. **Claude, a different model, suggested a status for all 71** (approved, edited or rejected) and a new text where needed, using written rules: rejected when the draft claims something wrong, edited when it is right but misses the driver or context, approved when it is right as written; plus rules for when "one-off", "too early to tell" or "persistent" fit. Claude used the ledger, the budget and months up to the one commented on. A script checks Claude's figures and wording the same way the drafts are checked. Result: 35 approved, 30 edited, 6 rejected. These statuses are what the dashboard shows, marked "suggested by Claude".
-3. **I checked a pre-registered random sample of 18**: all 6 rejected, plus 6 edited and 6 approved drawn at random (Python, seed 20261105). The sample and the rule for reporting were committed before I looked at any row. Agreement: **[x of 18]**. Where I disagree, my verdict replaces Claude's and the row is marked "checked by Knut".
+2. **Claude, a different model, suggested a status for all 71** (approved, edited or rejected) and a new text where needed, using written rules: rejected when the draft claims something wrong, edited when it is right but misses the driver or context, approved when it is right as written; plus rules for when "one-off", "too early to tell" or "persistent" fit. Claude used the ledger, the budget and months up to the one commented on. A script checks Claude's figures and wording the same way the drafts are checked. Result: 35 approved, 30 edited, 6 rejected.
+3. **I checked a pre-registered random sample of 18**: all 6 rejected, plus 6 edited and 6 approved drawn at random (Python, seed 20261105). The sample and the rule for reporting were committed before I looked at any row (commit b176b87). Agreement: **16 of 18**. All 6 rejected agreed. Where I disagreed, my verdict replaced Claude's. The 18 rows are marked "checked by Knut" on the dashboard; the other 53 are marked "suggested by Claude".
 
-The review is not blind. Claude saw the drafts and the ledger, and read the table of planted events in `docs/data-spec.md` only after writing the suggestions; in a later session it also saw the event settings in `config/settings.yaml` before drafting the month summaries. I know how the synthetic data was made.
+The two disagreements:
 
-Limitations: one model grading another is not the same as human review, and 18 is a small sample. Even 16 of 18 would leave a wide margin (a 95 % interval of roughly 67 % to 97 %). The sample also over-weights rejected rows (all 6 are in it), so it is not a direct estimate for all 71. The 53 rows outside the sample carry Claude's status only.
+- Repairs and maintenance, Feb 2025: Claude approved, I edited. ElektroTeknik Tarup ApS invoiced about DKK 58k more and offset almost all of the Hydra-Service drop. The draft missed it.
+- Temporary staff, Sep 2026: Claude edited, I approved. Driver and share were right and "persistent" held. American spelling alone is not a reason to edit under the rules.
+
+One disagreement went each way. Claude was too lenient once and too strict once. 18 cases are too few to say whether Claude leans either way. The counts stay at 35, 30 and 6, because one row moved each way.
+
+The review is not blind. Claude saw the drafts and the ledger, and read the table of planted events in `docs/data-spec.md` only after writing the suggestions. It read the event settings in `config/settings.yaml` after the statuses were written, before drafting the month summaries. I know how the synthetic data was made.
+
+Limitations: one model grading another is not the same as human review, and 18 is a small sample. 16 of 18 leaves a wide margin (a 95 % interval of roughly 67 % to 97 %). The sample also over-weights rejected rows (all 6 are in it), so it is not a direct estimate for all 71. The 53 rows outside the sample carry Claude's status only.
 
 The month summaries on the dashboard are drafts by Claude, labelled as such. Their figures are checked against that month's numbers by the same script logic.
 

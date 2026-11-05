@@ -117,3 +117,13 @@ email rewrite on the same day (see step 6) gave every commit a new hash. Date, m
 
 - Nothing changed. The sentence only says repairs and maintenance was DKK 0,10m under budget; it names no supplier, so it
   does not repeat the missed driver. Still `author = claude-draft`; `check_month_summaries.py` still passes.
+
+## Prompt B, A3. Agreement filled in
+
+- "[x of 18]" replaced with 16 of 18 in the method page, the AI quality panel and the README, with the two disagreements
+  in one line each and the note that one went each way and 18 cases are too few to say whether Claude leans either way.
+- The panel's agreement sentence is fixed text, not computed: the sheet is not part of the build. The status counts are
+  computed from `reviews.csv`: 35 + 30 + 6 = 71, matching the file; 18 rows by Knut, 53 by Claude.
+- Method page now says `config/settings.yaml` was read after the statuses were written (it was read in the same session,
+  after `review_suggestions.py` had been committed). Note: decisions steps 1 and 5 above still describe the placeholder as it
+  was then; they are history and left as written.
