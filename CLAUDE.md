@@ -35,6 +35,14 @@ No need to ask for small technical choices, debugging, tests, refactoring that d
 
 Run the tests (`scripts/test_draft_comments.py`, `scripts/test_review.py`) and the reconciliation checks (`scripts/build_db.py` stops if any check in `v_checks` fails). Say briefly what you checked and what the result was. If something was skipped, say so.
 
+## Design
+
+- Shared look with the other portfolio projects (P2 startup runway, P3 AML queue): same family, not a clone. Tokens live in `web/styles/tokens.css` (colours, fonts, radius), base styles in `web/styles/kit.css`, shared components in `web/components/kit/` (see its README). Use the tokens, never raw hex values in components.
+- Accent: deep petrol, `#1F5F6B` light and `#6FB0BB` dark. Green for favourable, red only for unfavourable or risk. No bright UI blue, indigo, violet or purple, no gradients, glass, glow, emoji, sparkle icons or marketing phrases. Tabular figures for numbers.
+- Hierarchy: EBITDA vs budget as the hero, then the bridge, then the variance list with drill-down. Explanations go in (i) popovers (keyboard, Esc closes), at most one short caption per card; "(fictional)" on every page and AI text labelled as drafts.
+- Motion 150 to 200 ms on hover, focus and filters; the bridge bars rise once on load (CSS, the value labels are never hidden); respect prefers-reduced-motion.
+- `node scripts/screenshots.mjs qa` checks the page in headless Edge (figures, keyboard, 375 px, reduced motion, console) and retakes `docs/screenshots/`. Keep the selectors listed at its top.
+
 ## Where the details are
 
 - `docs/ai-layer.md`: AI input and output, the figure check, cost control, evaluation, versions.

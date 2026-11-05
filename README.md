@@ -6,7 +6,7 @@ A month-end close dashboard for budget against actual, where AI drafts a comment
 
 > **All data is synthetic.** Odense Demo Manufacturing ApS and all its customers and suppliers are fictional. Any resemblance to real companies is coincidental.
 
-![The dashboard for September 2026: KPI row, draft summary, EBITDA bridge and the list of significant variances](docs/screenshots/desktop-light.png)
+![The dashboard for September 2026: EBITDA against budget, draft summary, EBITDA bridge and the list of significant variances](docs/screenshots/desktop-light.png)
 
 ## The problem
 
@@ -14,7 +14,7 @@ At month-end close a controller must explain every large gap between budget and 
 
 ## What the dashboard shows
 
-- A KPI row for the chosen month: revenue, EBITDA and EBITDA margin against budget, and the number of significant variances. In September 2026 EBITDA was DKK 0,25m against a budget of DKK 1,55m.
+- EBITDA against budget for the chosen month as the headline, with revenue, EBITDA margin and the number of significant variances beside it. In September 2026 EBITDA was DKK 0,25m against a budget of DKK 1,55m.
 - A one-sentence summary of the month, marked "Draft summary (Claude)".
 - An EBITDA bridge from budget to actual. Click a bar to filter the list.
 - The significant variances, largest first: at least 5 % and DKK 50.000 from budget, per account, cost centre and month. Raw materials also get a price row against a budget flexed to actual sales volume.

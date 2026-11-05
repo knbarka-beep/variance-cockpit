@@ -236,3 +236,69 @@ so the brief in the prompt stands in for the interview, and every choice is logg
 - BEFORE on current main (`5b62603`): all figure checks pass. Two "fails" were test bugs (upper-case CSS label; focus
   landing on `<body>` after the last stop) and were fixed in the script. "16 of 18" fails on main as expected: the old
   panel says "agreed with 16"; the redesign shows it as "16 of 18". Focus ring is the old bright blue `#1d4ed8`.
+
+### Step 1. Kit, tokens and accent
+
+- Copied from `../startup-runway/web`: `styles/tokens.css`, `styles/kit.css`, `components/kit/*`, `postcss.config.mjs`;
+  Tailwind 4.3.3 installed exactly as the kit README says. Fonts switch from Inter to Source Serif 4 (headings) and IBM Plex Sans.
+- Changes to the copied kit, kept small: `CardHeader` takes an `id` (the checks use `#bridge-title`, `#list-title`, `#ai-title`);
+  three `eslint-disable-next-line react-hooks/set-state-in-effect` lines in `ThemeToggle` and `useAnimateOnce` (P2 has no ESLint;
+  the pattern is intended: read a browser-only setting once after hydration); `postcss.config.mjs` exports a named object (lint).
+- Theme: light by default, dark behind the toggle, `?theme=dark|light` works, as in P2. The old page followed the OS setting;
+  that is dropped so the three projects behave the same.
+- **Accent: deep petrol, `#1F5F6B` light / `#6FB0BB` dark.** Two candidates were measured against the kit tokens:
+
+  | | Light on page / card | Dark on page / card | ΔE to green | ΔE to muted grey | ΔE to P2 ink blue |
+  |---|---|---|---|---|---|
+  | Graphite slate `#3D4651` / `#9AA6B2` | 9,1 / 9,6 : 1 | 7,4 / 6,9 : 1 | 43 / 44 | **19 / 14** | 25 / 21 |
+  | Petrol `#1F5F6B` / `#6FB0BB` | 6,9 / 7,2 : 1 | 7,6 / 7,1 : 1 | 33 / 35 | 25 / 26 | 26 / 24 |
+
+  Both pass AA for text and 3:1 for chart lines in both themes. Slate is too close to the muted text and the grey budget
+  line: as the "actual" line in the trend charts and as the focus ring it would read as one more grey, not as an accent.
+  Petrol stays clearly apart from the favourable green (hue 189° against 151°), from the red, and from P2's ink blue (teal, not blue).
+  `--accent-soft` `#E2EEF0` / `#1A2C30` (accent text 6,1 / 5,9 : 1), `--on-accent` white / `#141412` (7,2 / 7,6 : 1).
+
+### Step 2. Layout (impeccable, Operate mode)
+
+- Order: thin sticky header (name, "(fictional)", month controls, theme) > one caption line on synthetic data with an (i) that holds
+  the old yellow notice in full > **hero: EBITDA vs budget for the month** (large serif amount, "below/above budget", red/green pill
+  with the %), one sentence with actual vs budget and the two largest significant variances > revenue, EBITDA margin and
+  significant variances as compact stats > draft summary (Claude) > bridge (large card, sticky on desktop) beside the variance list
+  > AI quality > footer.
+- Text moved into (i) popovers, none deleted: the synthetic-data notice, the materiality rule (also still in the footer),
+  the metric definitions and the planted-events note with "How this is measured", and the whole review paragraph. The card keeps
+  the counts and "agreed with 16 of 18" visible. New popover text only describes what the page shows (what EBITDA adds up from,
+  how to read the bridge). There is no separate method page in this project; `docs/method-draft.md` (footer link) has everything in full.
+- Bridge filter chips became the kit's segmented control ("All" + the four P&L groups, `aria-pressed`); clicking a bar still filters.
+- List rows are separated by hairlines instead of boxed cards (no card inside a card). Unicode ▲/▼ arrows in the list are gone:
+  colour plus the word "favourable/unfavourable" carry the direction. Month arrows and the close button are drawn SVG, not ‹ › ✕.
+- Totals in the bridge use `--neutral` (warm grey), budget lines dashed `--neutral`, actual lines `--accent`.
+- Impeccable rules used: Operate mode (familiar patterns, restrained colour, accent only for focus, selection and the actual line);
+  craft floor: no eyebrow above a heading (the kit's `eyebrow` prop is not used; small labels name values, not headings), no nested
+  cards, no unicode glyphs as icons, browser surfaces themed (focus ring, `::selection`, tabular figures), one authored motion
+  moment (the bars rising once); "Refinement preserves": all copy, figures and behaviour kept. The detector
+  (`impeccable detect`) found no issues in `web/app`, `web/components`, `web/styles`.
+- Motion: 150 ms hover/focus/segmented, 150 ms popover, 200 ms drill-down slide-in, bars rise once in 400 ms through a CSS class
+  that is removed after 500 ms. Recharts' own animation is not used because it hides the value labels until it ends.
+
+### Loop rounds
+
+1. Bar value labels were missing in the light screenshot (Recharts hides labels while it animates, exactly what the brief warns
+   about): moved the load animation to CSS so the numbers are always drawn. "vs budget DKK 10,76m" wrapped over three lines in the
+   revenue stat: budget moved to its own line. The header ran off the screen at 375 px: controls wrap under the title on a phone.
+   Removed an unnamed tab stop on the revenue mini chart.
+2. The hero sentence was hard to read (commas in account names next to the amounts): amounts in parentheses, the % dropped from the
+   sentence because the pill shows it. A third round would only be polish, so the loop stopped here.
+
+### Checks
+
+- Data flow: `generate_data.py`, `check_data.py` (totals match), `build_db.py` (all `v_checks` pass), `check_suggestions.py`
+  (71, 0 failed), `check_month_summaries.py` (24 passed), `test_draft_comments.py`, `test_review.py`, `npm test` (4 passed),
+  `tsc`, `eslint`, `npm run build`: all pass. Only change in `data/`: the `built_at` timestamp in `meta.json`, reverted.
+  `web/lib/dashboard.json` is byte-identical, so every figure on the page is the same. `evaluate_ai.py` not rerun (it would rewrite
+  `data/ai/evaluation.json`). `data/truth/` not read.
+- `node scripts/screenshots.mjs qa`: 25 of 25 pass (figures, 35 + 30 + 6 = 71, "16 of 18", no "not reviewed" in 24 months, Tab
+  order, focus ring in the accent, drill-down Enter/Esc, popovers Enter/Esc and focus back, 375 px no sideways scroll, reduced motion,
+  no console errors).
+- Compare images: `docs/screenshots/redesign/compare-*.png`. `web/public/og.png` recropped (1200 x 630) from `desktop-light-after.png`.
+- `docs/screenshots/focus-drilldown.png` removed: not referenced anywhere and it showed the old design.
