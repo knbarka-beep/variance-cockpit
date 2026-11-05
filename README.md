@@ -41,6 +41,14 @@ rem fill in status, final_comment and reviewer_note in data\check\review.xlsx, t
 .venv\Scripts\python scripts\build_db.py
 ```
 
+Claude's suggested statuses, the spot-check sheet and the month summary check (see [docs/decisions.md](docs/decisions.md)):
+
+```
+.venv\Scripts\python scripts\apply_suggestions.py
+.venv\Scripts\python scripts\spot_check_export.py
+.venv\Scripts\python scripts\check_month_summaries.py
+```
+
 ## Dashboard (local build)
 
 The dashboard in `web/` is a static Next.js site (Recharts, no server, no live AI). It reads only `data/export/` (written by `build_db.py`) and the aggregate scores in `data/ai/evaluation.json`; `web/scripts/prepare-data.mjs` copies the fields it needs into `web/lib/dashboard.json` before every build.
