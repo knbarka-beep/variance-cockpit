@@ -96,3 +96,19 @@ email rewrite on the same day (see step 6) gave every commit a new hash. Date, m
   paths; no phone numbers; no thesis, ECIT or coursework references. Two findings, history not rewritten:
   1. Every commit's author email was a personal address. Fixed on 2026-11-05: history rewritten to the GitHub noreply address.
   2. `CLAUDE.md` (committed) named the author's employer in the rule that forbids using anything from it. Fixed on 2026-11-05: rephrased to "the author's employer", also in the history.
+
+## Prompt B, A1. Knut's spot check imported
+
+- Result read from `data/check/spot_check.xlsx`: **16 of 18 agree**, above the 14 threshold. All 6 rejected agreed.
+- Disagreements:
+  - 2025-02_4010_Production: Claude approved, Knut edited. ElektroTeknik Tarup ApS rose about DKK 58k and offsets almost all
+    of the Hydra-Service drop; the draft misses it.
+  - 2026-09_3030_Production: Claude edited, Knut approved. Driver and share are right, August and September are both over,
+    and American spelling alone is not a reason to edit under the status rules.
+- New script `scripts/import_spot_check.py` (rerunnable): sets `reviewed_by = knut` on all 18 rows and writes Knut's status,
+  final comment and note for the two disagreements. Knut's notes were in Norwegian; the English final comment and notes in
+  the script are the ones given in the brief. The script stops if the sheet's disagreements differ from the ones in the script.
+- The new final comment for 2025-02_4010 passed the same checks as Claude's suggestions (figures, look-ahead, spelling,
+  60 words) with no change to the numbers. `build_db.py`: all 7 checks pass.
+- Status counts are unchanged at 35 approved, 30 edited, 6 rejected (one row moved each way), 71 in total, 18 by Knut.
+- `review_import.py` was not run.
