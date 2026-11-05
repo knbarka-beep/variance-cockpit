@@ -127,3 +127,10 @@ email rewrite on the same day (see step 6) gave every commit a new hash. Date, m
 - Method page now says `config/settings.yaml` was read after the statuses were written (it was read in the same session,
   after `review_suggestions.py` had been committed). Note: decisions steps 1 and 5 above still describe the placeholder as it
   was then; they are history and left as written.
+
+## Prompt B, A4. Private details (check only)
+
+- Done earlier in this session (history rewritten to the noreply address, employer name removed). Rerun of the check:
+  `git log --all --format='%ae %ce' | sort -u` shows only `299253900+knbarka-beep@users.noreply.github.com`. 0 hits for
+  the old address and 0 for "Ria" as a word, in tracked files and in the full history. No absolute personal paths in tracked
+  files. No key or token patterns (Google `AIza`, `sk-`, `sk-ant`, `ghp_`, `api_key=`) and no `.env` file in any commit.
