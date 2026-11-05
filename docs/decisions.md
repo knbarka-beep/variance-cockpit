@@ -187,3 +187,12 @@ email rewrite on the same day (see step 6) gave every commit a new hash. Date, m
   and the drill-down, a visible focus ring on every stop, no horizontal scroll at 375 px, "(fictional)" on the 404 page,
   no console errors. Two first-run failures were test bugs (upper-case CSS and the test server's own 404 page).
 - **Screenshots** in `docs/screenshots/`: desktop light and dark, 375 px, drill-down, focus in the drill-down, AI quality panel.
+
+## Prompt B, fixes before going public (Knut's instructions)
+
+- README and case sheet use "significant variance", the dashboard's own term ("Significant variances"). "Material" was
+  dropped earlier because it is confused with raw materials. The style ban is on "significant" as filler, not as the defined
+  term. This replaces the A5 choice above.
+- Case sheet: marketing about 41 % over budget in FY2025 from a random draw, fixed by centring the noise per year. The 41 %
+  comes from Knut's manual Excel check on 01.11.2026, on the data set before the fix. It is not reproducible from the
+  current data, which was regenerated after the fix.

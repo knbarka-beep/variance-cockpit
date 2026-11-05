@@ -1,12 +1,12 @@
 # Variance Cockpit
 
-A month-end close dashboard for budget against actual, where AI drafts a comment on each material variance and the drafts are reviewed.
+A month-end close dashboard for budget against actual, where AI drafts a comment on each significant variance and the drafts are reviewed.
 
 **Live:** [LIVE_URL] (static site, no login)
 
 > **All data is synthetic.** Odense Demo Manufacturing ApS and all its customers and suppliers are fictional. Any resemblance to real companies is coincidental.
 
-![The dashboard for September 2026: KPI row, draft summary, EBITDA bridge and the list of material variances](docs/screenshots/desktop-light.png)
+![The dashboard for September 2026: KPI row, draft summary, EBITDA bridge and the list of significant variances](docs/screenshots/desktop-light.png)
 
 ## The problem
 
@@ -14,20 +14,20 @@ At month-end close a controller must explain every large gap between budget and 
 
 ## What the dashboard shows
 
-- A KPI row for the chosen month: revenue, EBITDA and EBITDA margin against budget, and the number of material variances. In September 2026 EBITDA was DKK 0,25m against a budget of DKK 1,55m.
+- A KPI row for the chosen month: revenue, EBITDA and EBITDA margin against budget, and the number of significant variances. In September 2026 EBITDA was DKK 0,25m against a budget of DKK 1,55m.
 - A one-sentence summary of the month, marked "Draft summary (Claude)".
 - An EBITDA bridge from budget to actual. Click a bar to filter the list.
-- The material variances, largest first: at least 5 % and DKK 50.000 from budget, per account, cost centre and month. Raw materials also get a price row against a budget flexed to actual sales volume.
+- The significant variances, largest first: at least 5 % and DKK 50.000 from budget, per account, cost centre and month. Raw materials also get a price row against a budget flexed to actual sales volume.
 - A drill-down per variance: the last 12 months, the AI draft, the review status and the ledger lines behind it.
 - An AI quality panel with review counts and evaluation scores.
 
-The data covers October 2024 to September 2026, with 71 material variances.
+The data covers October 2024 to September 2026, with 71 significant variances.
 
 ## How it is built
 
 - **Data.** A Python script generates the budget and a general ledger of 2.120 lines from `config/settings.yaml`, with a fixed random seed. Six business events are planted on top, such as a price increase. An answer key records them, and only the evaluation script reads it. See [docs/data-spec.md](docs/data-spec.md).
 - **Calculations.** All numbers come from SQL views in DuckDB. Python only runs the SQL and writes JSON. Seven reconciliation checks run on every build, and the build stops if one fails. See [docs/sql-guide.md](docs/sql-guide.md).
-- **AI drafts.** Gemini writes one draft per material variance, once. The drafts are stored, so the dashboard never calls a model. See [docs/ai-layer.md](docs/ai-layer.md).
+- **AI drafts.** Gemini writes one draft per significant variance, once. The drafts are stored, so the dashboard never calls a model. See [docs/ai-layer.md](docs/ai-layer.md).
 - **Dashboard.** A static Next.js site with Recharts in `web/`, hosted on Vercel. A small script copies the exported JSON into the site at build time.
 
 Run it on Windows:
